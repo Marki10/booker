@@ -2,11 +2,12 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import type { BookingFormData } from '../types/booking'
 import { bookingService } from '../services/bookingService'
-import { getTimeSlots, getTodayDate, isPastDateTime, validateBookingForm } from '../utils'
+import { getTimeSlots, getTodayDate, isPastDateTime } from '../utils/dateUtils'
+import { validateBookingForm } from '../utils/validation'
 import { Calendar, Clock, User, Mail, FileText } from 'lucide-react'
 
 interface BookingFormProps {
-  onSubmit: (booking: BookingFormData) => void
+  onSubmit: (booking: BookingFormData) => void | Promise<void>
   onCancel?: () => void
   initialData?: Partial<BookingFormData>
 }
@@ -26,7 +27,7 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
   const timeSlots = getTimeSlots(9, 17, 30)
   const durationOptions = [15, 30, 60, 90, 120, 180, 240]
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setErrors({})
 
@@ -48,14 +49,15 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
     }
 
     // Check if time slot is available
-    if (
-      !bookingService.isTimeSlotAvailable(
-        formData.date,
-        formData.time,
-        formData.duration,
-        initialData ? 'existing' : undefined
-      )
-    ) {
+    // Note: We don't have the booking ID here when editing, so we check availability
+    // The backend will handle the conflict check properly
+    const isAvailable = await bookingService.isTimeSlotAvailable(
+      formData.date,
+      formData.time,
+      formData.duration
+    )
+
+    if (!isAvailable) {
       setErrors({
         time: 'This time slot is already booked. Please choose another time.',
       })
@@ -86,9 +88,9 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
       <div>
-        <label htmlFor="name" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+        <label htmlFor="name" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
           <div className="p-1.5 bg-blue-100 rounded-lg">
             <User className="w-4 h-4 text-blue-600" />
           </div>
@@ -99,13 +101,14 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
           id="name"
           value={formData.name}
           onChange={(e) => handleChange('name', e.target.value)}
-          className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-offset-2 transition-all duration-200 ${
+          className={`w-full px-4 py-3.5 sm:py-3 text-base border-2 rounded-xl focus:ring-2 focus:ring-offset-1 sm:focus:ring-offset-2 transition-all duration-200 touch-manipulation ${
             errors.name
               ? 'border-red-400 focus:ring-red-500 focus:border-red-500'
               : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300'
           }`}
           placeholder="Enter your full name"
           required
+          autoComplete="name"
         />
         {errors.name && (
           <p className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-in slide-in-from-top-1">
@@ -127,13 +130,15 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
           id="email"
           value={formData.email}
           onChange={(e) => handleChange('email', e.target.value)}
-          className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-offset-2 transition-all duration-200 ${
+          className={`w-full px-4 py-3.5 sm:py-3 text-base border-2 rounded-xl focus:ring-2 focus:ring-offset-1 sm:focus:ring-offset-2 transition-all duration-200 touch-manipulation ${
             errors.email
               ? 'border-red-400 focus:ring-red-500 focus:border-red-500'
               : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300'
           }`}
           placeholder="your.email@example.com"
           required
+          autoComplete="email"
+          inputMode="email"
         />
         {errors.email && (
           <p className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-in slide-in-from-top-1">
@@ -143,9 +148,9 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         <div>
-          <label htmlFor="date" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+          <label htmlFor="date" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
             <div className="p-1.5 bg-green-100 rounded-lg">
               <Calendar className="w-4 h-4 text-green-600" />
             </div>
@@ -157,7 +162,7 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
             value={formData.date}
             onChange={(e) => handleChange('date', e.target.value)}
             min={getTodayDate()}
-            className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-offset-2 transition-all duration-200 ${
+            className={`w-full px-4 py-3.5 sm:py-3 text-base border-2 rounded-xl focus:ring-2 focus:ring-offset-1 sm:focus:ring-offset-2 transition-all duration-200 touch-manipulation ${
               errors.date
                 ? 'border-red-400 focus:ring-red-500 focus:border-red-500'
                 : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300'
@@ -183,7 +188,7 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
             id="time"
             value={formData.time}
             onChange={(e) => handleChange('time', e.target.value)}
-            className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-offset-2 transition-all duration-200 cursor-pointer ${
+            className={`w-full px-4 py-3.5 sm:py-3 text-base border-2 rounded-xl focus:ring-2 focus:ring-offset-1 sm:focus:ring-offset-2 transition-all duration-200 cursor-pointer touch-manipulation ${
               errors.time
                 ? 'border-red-400 focus:ring-red-500 focus:border-red-500'
                 : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300'
@@ -216,7 +221,7 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
           id="duration"
           value={formData.duration}
           onChange={(e) => handleChange('duration', parseInt(e.target.value, 10))}
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-all duration-200 cursor-pointer"
+          className="w-full px-4 py-3.5 sm:py-3 text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-all duration-200 cursor-pointer touch-manipulation"
         >
           {durationOptions.map((duration) => (
             <option key={duration} value={duration}>
@@ -238,15 +243,15 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
           value={formData.notes}
           onChange={(e) => handleChange('notes', e.target.value)}
           rows={4}
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-all duration-200 resize-none"
+          className="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-all duration-200 resize-none touch-manipulation"
           placeholder="Any additional notes or special requirements..."
         />
       </div>
 
-      <div className="flex gap-4 pt-6">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 sm:pt-6">
         <button
           type="submit"
-          className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+          className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3.5 sm:py-3 px-6 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 min-h-[48px] text-base touch-manipulation"
         >
           {initialData ? 'Update Booking' : 'Create Booking'}
         </button>
@@ -254,7 +259,7 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 bg-gray-100 text-gray-700 py-3 px-6 rounded-xl hover:bg-gray-200 transition-all duration-200 font-semibold border-2 border-gray-200 hover:border-gray-300"
+            className="flex-1 bg-gray-100 text-gray-700 py-3.5 sm:py-3 px-6 rounded-xl hover:bg-gray-200 transition-all duration-200 font-semibold border-2 border-gray-200 hover:border-gray-300 min-h-[48px] text-base touch-manipulation"
           >
             Cancel
           </button>
