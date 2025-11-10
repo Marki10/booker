@@ -1,77 +1,30 @@
-import { useState } from 'react'
-import type { Booking, BookingFormData } from './types/booking'
-import { useBookings } from './hooks/useBookings'
-import { bookingToFormData } from './utils/bookingUtils'
-import { AppHeader } from './components/AppHeader'
-import { FormModal } from './components/FormModal'
-import { BookingsView } from './components/BookingsView'
+import { bookingToFormData } from "./utils/bookingUtils";
+import { AppHeader } from "./components/AppHeader";
+import { FormModal } from "./components/FormModal";
+import { BookingsView } from "./components/BookingsView";
+
+import { useAppController } from "./controllers/useAppController";
 
 function App() {
-  const [showForm, setShowForm] = useState(false)
-  const [editingBooking, setEditingBooking] = useState<Booking | null>(null)
-  const [selectedDate, setSelectedDate] = useState<string>('')
-  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list')
-
   const {
+    showForm,
+    editingBooking,
+    selectedDate,
+    viewMode,
+    setSelectedDate,
+    setViewMode,
     bookings,
     isSyncing,
     syncStatus,
     syncWithBackend,
-    createBooking,
-    updateBooking,
-    deleteBooking,
-  } = useBookings()
-
-  const handleCreateBooking = async (formData: BookingFormData) => {
-    await createBooking(formData)
-    setShowForm(false)
-    setEditingBooking(null)
-  }
-
-  const handleUpdateBooking = async (formData: BookingFormData) => {
-    if (editingBooking) {
-      await updateBooking(editingBooking.id, formData)
-      setShowForm(false)
-      setEditingBooking(null)
-    }
-  }
-
-  const handleFormSubmit = (formData: BookingFormData) => {
-    if (editingBooking) {
-      handleUpdateBooking(formData)
-    } else {
-      handleCreateBooking(formData)
-    }
-  }
-
-  const handleCancelForm = () => {
-    setShowForm(false)
-    setEditingBooking(null)
-  }
-
-  const handleEditBooking = (booking: Booking) => {
-    setEditingBooking(booking)
-    setShowForm(true)
-  }
-
-  const handleDeleteBooking = async (id: string) => {
-    await deleteBooking(id)
-  }
-
-  const handleTitleClick = () => {
-    setShowForm(false)
-    setEditingBooking(null)
-    setSelectedDate('')
-  }
-
-  const handleNewBooking = () => {
-    setEditingBooking(null)
-    setShowForm(true)
-  }
-
-  const handleClearDate = () => {
-    setSelectedDate('')
-  }
+    handleFormSubmit,
+    handleCancelForm,
+    handleEditBooking,
+    handleDeleteBooking,
+    handleTitleClick,
+    handleNewBooking,
+    handleClearDate,
+  } = useAppController();
 
   return (
     <div className="min-h-screen">
@@ -89,7 +42,9 @@ function App() {
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
         {showForm ? (
           <FormModal
-            editingBooking={editingBooking ? bookingToFormData(editingBooking) : null}
+            editingBooking={
+              editingBooking ? bookingToFormData(editingBooking) : null
+            }
             onSubmit={handleFormSubmit}
             onCancel={handleCancelForm}
           />
@@ -106,7 +61,7 @@ function App() {
         )}
       </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
