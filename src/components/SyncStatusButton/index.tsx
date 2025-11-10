@@ -18,6 +18,7 @@ export const SyncStatusButton = ({ onSync, isSyncing, syncStatus }: SyncStatusBu
         disabled={isSyncing}
         className="relative flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 sm:px-3 sm:py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
         title={syncStatus.backendAvailable ? 'Sync with backend' : 'Backend not available'}
+        data-testid="sync-button"
       >
         {isSyncing ? (
           <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
@@ -34,6 +35,7 @@ export const SyncStatusButton = ({ onSync, isSyncing, syncStatus }: SyncStatusBu
         <span
           className="text-xs text-gray-500 hidden md:inline-block"
           title={`Last synced: ${new Date(syncStatus.lastSync).toLocaleString()}`}
+          data-testid="sync-status"
         >
           {new Date(syncStatus.lastSync).toLocaleTimeString()}
         </span>

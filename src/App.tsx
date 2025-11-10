@@ -1,4 +1,3 @@
-import { bookingToFormData } from "./utils/bookingUtils";
 import { AppHeader } from "./components/AppHeader";
 import { FormModal } from "./components/FormModal";
 import { BookingsView } from "./components/BookingsView";
@@ -42,9 +41,7 @@ function App() {
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
         {showForm ? (
           <FormModal
-            editingBooking={
-              editingBooking ? bookingToFormData(editingBooking) : null
-            }
+            editingBooking={editingBooking}
             onSubmit={handleFormSubmit}
             onCancel={handleCancelForm}
           />

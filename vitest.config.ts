@@ -6,12 +6,9 @@ export default defineConfig({
   test: {
     environment: "happy-dom",
     setupFiles: ["src/setupTests.ts"],
-    include: [
-      "src/**/*.{test,spec}.{ts,tsx}",
-      "src/**/__tests__/**/*.{ts,tsx}",
-    ],
     globals: true,
     css: true,
+    pool: 'threads',
   },
   esbuild: {
     jsx: "automatic",

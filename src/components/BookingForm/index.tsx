@@ -10,9 +10,10 @@ interface BookingFormProps {
   onSubmit: (booking: BookingFormData) => void | Promise<void>
   onCancel?: () => void
   initialData?: Partial<BookingFormData>
+  excludeBookingId?: string
 }
 
-export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProps) => {
+export const BookingForm = ({ onSubmit, onCancel, initialData, excludeBookingId }: BookingFormProps) => {
   const [formData, setFormData] = useState<BookingFormData>({
     name: initialData?.name || '',
     email: initialData?.email || '',
@@ -54,7 +55,8 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
     const isAvailable = await bookingService.isTimeSlotAvailable(
       formData.date,
       formData.time,
-      formData.duration
+      formData.duration,
+      excludeBookingId
     )
 
     if (!isAvailable) {
@@ -88,7 +90,7 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6" noValidate>
       <div>
         <label htmlFor="name" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
           <div className="p-1.5 bg-blue-100 rounded-lg">
@@ -109,9 +111,10 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
           placeholder="Enter your full name"
           required
           autoComplete="name"
+          data-testid="booking-form-name"
         />
         {errors.name && (
-          <p className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-in slide-in-from-top-1">
+          <p className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-in slide-in-from-top-1" data-testid="booking-form-name-error">
             <span className="text-red-500">●</span>
             {errors.name}
           </p>
@@ -139,9 +142,10 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
           required
           autoComplete="email"
           inputMode="email"
+          data-testid="booking-form-email"
         />
         {errors.email && (
-          <p className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-in slide-in-from-top-1">
+          <p className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-in slide-in-from-top-1" data-testid="booking-form-email-error">
             <span className="text-red-500">●</span>
             {errors.email}
           </p>
@@ -168,9 +172,10 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
                 : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300'
             }`}
             required
+            data-testid="booking-form-date"
           />
           {errors.date && (
-            <p className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-in slide-in-from-top-1">
+            <p className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-in slide-in-from-top-1" data-testid="booking-form-date-error">
               <span className="text-red-500">●</span>
               {errors.date}
             </p>
@@ -194,6 +199,7 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
                 : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300'
             }`}
             required
+            data-testid="booking-form-time"
           >
             {timeSlots.map((slot) => (
               <option key={slot} value={slot}>
@@ -202,7 +208,7 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
             ))}
           </select>
           {errors.time && (
-            <p className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-in slide-in-from-top-1">
+            <p className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-in slide-in-from-top-1" data-testid="booking-form-time-error">
               <span className="text-red-500">●</span>
               {errors.time}
             </p>
@@ -222,6 +228,7 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
           value={formData.duration}
           onChange={(e) => handleChange('duration', parseInt(e.target.value, 10))}
           className="w-full px-4 py-3.5 sm:py-3 text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-all duration-200 cursor-pointer touch-manipulation"
+          data-testid="booking-form-duration"
         >
           {durationOptions.map((duration) => (
             <option key={duration} value={duration}>
@@ -245,13 +252,16 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
           rows={4}
           className="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-all duration-200 resize-none touch-manipulation"
           placeholder="Any additional notes or special requirements..."
+          data-testid="booking-form-notes"
         />
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 sm:pt-6">
         <button
           type="submit"
+          formNoValidate
           className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3.5 sm:py-3 px-6 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 min-h-[48px] text-base touch-manipulation"
+          data-testid="booking-form-submit"
         >
           {initialData ? 'Update Booking' : 'Create Booking'}
         </button>
@@ -260,6 +270,7 @@ export const BookingForm = ({ onSubmit, onCancel, initialData }: BookingFormProp
             type="button"
             onClick={onCancel}
             className="flex-1 bg-gray-100 text-gray-700 py-3.5 sm:py-3 px-6 rounded-xl hover:bg-gray-200 transition-all duration-200 font-semibold border-2 border-gray-200 hover:border-gray-300 min-h-[48px] text-base touch-manipulation"
+            data-testid="booking-form-cancel"
           >
             Cancel
           </button>

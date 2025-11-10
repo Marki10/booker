@@ -22,12 +22,13 @@ export const BookingList = ({ bookings, onEdit, onDelete }: BookingListProps) =>
   }
 
   return (
-    <div className="space-y-3 sm:space-y-4">
+    <div className="space-y-3 sm:space-y-4" data-testid="booking-list">
       {bookings.map((booking, index) => (
         <div
           key={booking.id}
           className="group bg-white/90 backdrop-blur-sm border-2 border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md hover:shadow-2xl hover:border-blue-300 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4"
           style={{ animationDelay: `${index * 50}ms` }}
+          data-testid="booking-item"
         >
           <div className="flex justify-between items-start mb-4 sm:mb-5 gap-3">
             <div className="flex-1 min-w-0">
@@ -93,6 +94,7 @@ export const BookingList = ({ bookings, onEdit, onDelete }: BookingListProps) =>
                 <button
                   onClick={() => onEdit(booking)}
                   className="flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-sm font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 min-h-[44px] touch-manipulation"
+                  data-testid="edit-booking-button"
                 >
                   <Edit className="w-4 h-4" />
                   Edit
@@ -102,6 +104,7 @@ export const BookingList = ({ bookings, onEdit, onDelete }: BookingListProps) =>
                 <button
                   onClick={() => onDelete(booking.id)}
                   className="flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 min-h-[44px] touch-manipulation"
+                  data-testid="delete-booking-button"
                 >
                   <Trash2 className="w-4 h-4" />
                   Delete

@@ -75,7 +75,7 @@ export const BookingCalendar = ({ bookings, selectedDate, onDateSelect }: Bookin
   }
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm border-2 border-gray-200/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-xl">
+    <div className="bg-white/90 backdrop-blur-sm border-2 border-gray-200/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-xl" data-testid="booking-calendar">
       <div className="flex items-center justify-between mb-4 sm:mb-6 lg:mb-8">
         <button
           onClick={goToPreviousMonth}
