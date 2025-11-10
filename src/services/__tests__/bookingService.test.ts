@@ -1,46 +1,57 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
+import type { Booking } from "../../types/booking";
 
 // In-memory fakes for storage and api
 const makeStorage = () => {
-  let bookings: any[] = [];
+  let bookings: Booking[] = [];
   let syncMeta = {
     lastSync: null as string | null,
     lastSyncId: null as string | null,
     pendingSync: false,
   };
   return {
-    getBookings: () => bookings,
-    saveBookings: (b: any[]) => {
+    getBookings: (): Booking[] => bookings,
+    saveBookings: (b: Booking[]) => {
       bookings = JSON.parse(JSON.stringify(b));
     },
     getSyncMetadata: () => ({ ...syncMeta }),
     saveSyncMetadata: (m: typeof syncMeta) => {
       syncMeta = { ...m };
     },
-    __setBookings: (b: any[]) => (bookings = JSON.parse(JSON.stringify(b))),
+    __setBookings: (b: Booking[]) => (bookings = JSON.parse(JSON.stringify(b))),
     __getState: () => ({ bookings, syncMeta }),
   };
 };
 
 const makeApi = () => {
   return {
-    getAllBookings: vi.fn(async () => [] as any[]),
-    createBooking: vi.fn(async (data: any) => ({
+    getAllBookings: vi.fn(async (): Promise<Booking[]> => []),
+    createBooking: vi.fn(async (data: Partial<Booking>): Promise<Booking> => ({
       id: "booking-remote-1",
+      name: data.name ?? "Remote",
+      email: data.email ?? "remote@example.com",
+      date: data.date ?? "2025-01-01",
+      time: data.time ?? "09:00",
+      duration: data.duration ?? 60,
+      notes: data.notes,
       status: "confirmed",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      ...data,
     })),
-    updateBooking: vi.fn(async (id: string, data: any) => ({
+    updateBooking: vi.fn(async (id: string, data: Partial<Booking>): Promise<Booking> => ({
       id,
+      name: data.name ?? "Updated",
+      email: data.email ?? "updated@example.com",
+      date: data.date ?? "2025-01-01",
+      time: data.time ?? "09:00",
+      duration: data.duration ?? 60,
+      notes: data.notes,
       status: "confirmed",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      ...data,
     })),
-    deleteBooking: vi.fn(async () => {}),
-    checkAvailability: vi.fn(async () => true),
+    deleteBooking: vi.fn(async (): Promise<void> => {}),
+    checkAvailability: vi.fn(async (): Promise<boolean> => true),
   };
 };
 
@@ -48,7 +59,7 @@ const makeApi = () => {
 vi.mock("../storageService", () => {
   const storage = makeStorage();
   return {
-    storageService: storage as any,
+    storageService: storage,
     // expose for tests to access internal state (not used by the SUT)
     __storage: storage,
   };
@@ -72,8 +83,13 @@ const importService = async () => {
 
 // Access to mocks
 const getStorageMock = async () =>
-  ((await import("../storageService")) as any).__storage;
-const getApiMock = async () => ((await import("../apiService")) as any).__api;
+  ((await import("../storageService")) as unknown as {
+    __storage: ReturnType<typeof makeStorage>;
+  }).__storage;
+const getApiMock = async () =>
+  ((await import("../apiService")) as unknown as {
+    __api: ReturnType<typeof makeApi>;
+  }).__api;
 
 describe("bookingService", () => {
   beforeEach(async () => {
@@ -220,7 +236,7 @@ describe("bookingService", () => {
         updatedAt: "",
       },
     ]);
-    (api.getAllBookings as any).mockResolvedValueOnce([
+    (api.getAllBookings as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce([
       {
         id: "booking-2",
         name: "Remote",
@@ -238,7 +254,7 @@ describe("bookingService", () => {
     expect(res.success).toBe(true);
     const state = storage.__getState();
     // merged contains both ids
-    const ids = state.bookings.map((b: any) => b.id).sort();
+    const ids = (state.bookings as Booking[]).map((b) => b.id).sort();
     expect(ids).toEqual(["booking-1", "booking-2"]);
   });
 });

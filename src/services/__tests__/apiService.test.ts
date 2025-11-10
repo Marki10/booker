@@ -27,7 +27,7 @@ describe("apiService", () => {
 
   beforeEach(() => {
     vi.useRealTimers();
-    globalThis.fetch = vi.fn() as any;
+    globalThis.fetch = vi.fn() as unknown as typeof fetch;
   });
 
   afterEach(() => {
@@ -42,7 +42,8 @@ describe("apiService", () => {
 
     const data = await apiService.getAllBookings();
     expect(Array.isArray(data)).toBe(true);
-    expect((data as any)[0]).toHaveProperty("id", testData.list[0].id);
+    const first = (data as Array<{ id: string }>)[0];
+    expect(first).toHaveProperty("id", testData.list[0].id);
   });
 
   it("createBooking posts data and returns created booking", async () => {

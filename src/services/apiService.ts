@@ -24,7 +24,7 @@ export const checkBackendAvailable = async (): Promise<boolean> => {
 
     clearTimeout(timeoutId);
     return response.ok;
-  } catch (error) {
+  } catch {
     return false;
   }
 };
