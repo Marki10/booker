@@ -55,8 +55,8 @@ describe("Booking Happy Path", () => {
 
   it("should switch between list and calendar views", () => {
     createBookingViaUI({
-      name: "View Seed",
-      email: "view@example.com",
+      name: testData.viewSeed.name,
+      email: testData.viewSeed.email,
       date: testData.create.date,
       time: testData.create.time,
       duration: testData.create.duration,
@@ -70,13 +70,13 @@ describe("Booking Happy Path", () => {
 
   it("should edit an existing booking successfully", () => {
     createBookingViaUI({
-      name: "Original Title",
-      email: "original@example.com",
-      date: "2026-12-16",
-      time: "14:00",
-      duration: "60",
+      name: testData.editOriginal.name,
+      email: testData.editOriginal.email,
+      date: testData.editOriginal.date,
+      time: testData.editOriginal.time,
+      duration: testData.editOriginal.duration,
     });
-    cy.contains('[data-testid="booking-item"]', 'Original Title')
+    cy.contains('[data-testid="booking-item"]', testData.editOriginal.name)
       .first()
       .within(() => {
         cy.get('[data-testid="edit-booking-button"]').click();

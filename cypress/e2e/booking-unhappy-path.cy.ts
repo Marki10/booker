@@ -22,12 +22,7 @@ describe("Booking Unhappy Path", () => {
     cy.get('[data-testid="new-booking-button"]').click();
     cy.get('[data-testid="booking-form-name"]').type("Past Date Test");
     cy.get('[data-testid="booking-form-email"]').type("user@example.com");
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const y = yesterday.getFullYear();
-    const m = String(yesterday.getMonth() + 1).padStart(2, "0");
-    const d = String(yesterday.getDate()).padStart(2, "0");
-    const iso = `${y}-${m}-${d}`;
+    const iso = testData.pastDate();
     cy.get('[data-testid="booking-form-date"]').then(($input) => {
       // For type="date", programmatic set + events is most reliable
       const input = $input[0] as HTMLInputElement;
@@ -56,8 +51,8 @@ describe("Booking Unhappy Path", () => {
 
   it("should cancel form creation without saving", () => {
     cy.get('[data-testid="new-booking-button"]').click();
-    cy.get('[data-testid="booking-form-name"]').type("Will Be Canceled");
-    cy.get('[data-testid="booking-form-email"]').type("cancel@example.com");
+    cy.get('[data-testid="booking-form-name"]').type(testData.cancel.name);
+    cy.get('[data-testid="booking-form-email"]').type(testData.cancel.email);
     cy.get('[data-testid="booking-form-cancel"]').click();
     cy.get('[data-testid="booking-form-modal"]').should("not.exist");
     cy.contains("No bookings found").should("be.visible");

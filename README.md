@@ -154,6 +154,36 @@ See the `example/backend/` directory for a sample backend and `example/aws/` for
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
+- `npm run test` - Run unit tests (Vitest)
+- `npm run test:e2e` - Run Cypress E2E headless
+- `npm run test:e2e:open` - Open Cypress runner
+
+## Testing
+
+### Unit tests (Vitest)
+
+- Run once: `npm run test`
+- Watch mode: `npm run test:watch`
+- Coverage: `npm run test:coverage`
+
+### E2E tests (Cypress)
+
+- Headless: `npm run test:e2e`
+- Interactive: `npm run test:e2e:open`
+- When running interactively, ensure the dev server is up at `http://localhost:5173` (Cypress will launch it automatically if configured via dev server). If not, start it with `npm run dev`.
+
+#### Conventions used in tests
+
+- **data-testid**: Stable selectors are added across the UI (e.g. `booking-form-name`, `booking-item`, `view-mode-list`).
+- **State reset**: Custom Cypress command `cy.resetApp()` clears app storage keys (`booker_bookings`, `booker_sync_meta`) and seeds empty state before each test.
+- **Dynamic dates**: Tests use `cypress/support/testData.ts` helpers to generate future dates to avoid collisions.
+
+#### Troubleshooting E2E
+
+- **Booking conflicts**: The app checks local availability. Edits exclude the current booking’s ID to avoid self-conflict.
+- **Modal assertions**: Prefer asserting list content after actions instead of requiring the modal to be removed from the DOM. Some modals remain mounted but hidden.
+- **HTML5 validation**: Native validation is disabled (`noValidate` on the form, `formNoValidate` on submit) so custom error elements (e.g. `booking-form-date-error`) render and can be asserted.
+- **Date inputs**: For `type="date"`, programmatic value set plus `input/change/blur` events is the most reliable way to set past/future dates in tests.
 
 ## Environment Variables
 

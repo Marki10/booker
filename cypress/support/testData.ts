@@ -26,6 +26,13 @@ export const testData = {
     name: 'Updated Title',
     notes: 'Updated description',
   },
+  editOriginal: {
+    name: 'Original Title',
+    email: 'original@example.com',
+    date: '2026-12-16',
+    time: '14:00',
+    duration: '60',
+  },
   toDelete: {
     name: 'To Be Deleted',
     email: 'delete@example.com',
@@ -40,4 +47,13 @@ export const testData = {
     time: '10:00',
     duration: '60',
   },
+  viewSeed: {
+    name: 'View Seed',
+    email: 'view@example.com',
+  },
+  cancel: {
+    name: 'Will Be Canceled',
+    email: 'cancel@example.com',
+  },
+  pastDate: () => getISODatePlus(-1),
 }
