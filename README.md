@@ -69,26 +69,42 @@ npm run preview
 ```
 booker/
 ├── src/
-│   ├── components/       # React components
-│   │   ├── BookingForm.tsx
-│   │   ├── BookingList.tsx
-│   │   └── BookingCalendar.tsx
-│   ├── services/         # Business logic
-│   │   └── bookingService.ts
-│   ├── types/            # TypeScript types
+│   ├── components/        # UI components (AppHeader, FormModal, BookingsView, DateFilter, ...)
+│   ├── controllers/       # UI controllers (state + handlers)
+│   │   └── useAppController.ts
+│   ├── hooks/             # Reusable hooks
+│   │   └── useBookings.ts
+│   ├── services/          # Domain/business logic and integrations
+│   │   ├── bookingService.ts
+│   │   ├── storageService.ts
+│   │   └── apiService.ts
+│   ├── types/             # TypeScript types
 │   │   └── booking.ts
-│   ├── utils/            # Utility functions
-│   │   ├── dateUtils.ts
-│   │   └── validation.ts
-│   ├── App.tsx           # Main app component
-│   ├── main.tsx          # Entry point
-│   └── index.css         # Global styles
+│   ├── utils/             # Utility functions
+│   │   └── bookingUtils.ts
+│   ├── App.tsx            # Main app component (thin, uses controller)
+│   ├── main.tsx           # Entry point
+│   └── index.css          # Global styles
 ├── public/               # Static assets
 ├── example/              # Backend and AWS deployment examples
 │   ├── backend/          # Node.js/Express backend
 │   └── aws/              # AWS deployment configurations
 └── README.md
 ```
+
+## Architecture
+
+- **Controller pattern**: UI state and event handlers live in controllers, keeping components presentational.
+  - `useAppController` centralizes app UI state like `showForm`, `editingBooking`, `selectedDate`, `viewMode` and exposes actions such as `handleFormSubmit`, `handleEditBooking`, `handleDeleteBooking`, and `syncWithBackend`.
+- **Domain logic**: Encapsulated in services.
+  - `bookingService` manages CRUD, conflict checks, and sync orchestration.
+  - `storageService` persists data in `localStorage`.
+  - `apiService` (optional) integrates with a backend when available.
+- **Data flow**:
+  1. Components render and forward user events to the controller.
+  2. The controller calls hooks/services.
+  3. `useBookings` loads from `storageService` and optionally triggers `bookingService.syncWithBackend`.
+  4. UI updates via React state.
 
 ## Usage
 
@@ -123,9 +139,14 @@ booker/
 
 ## Backend Integration
 
-The app currently uses in-memory storage. To integrate with a backend API, see the [Frontend Integration Guide](example/frontend-integration.md).
+- The app is **localStorage-first** via `storageService`. It works fully offline without a backend.
+- If a backend is configured (see `apiService`), the app can:
+  - Check backend availability on startup.
+  - Manually sync via the header "Sync" action (`syncWithBackend`).
+  - Auto-attempt background syncs after CRUD operations when the backend is available.
+- `syncStatus` (from the controller/hook) exposes `lastSync`, `pendingSync`, and `backendAvailable` for UI.
 
-Example backend implementations and AWS deployment configurations are available in the `example/` directory.
+See the `example/backend/` directory for a sample backend and `example/aws/` for deployment references.
 
 ## Scripts
 
