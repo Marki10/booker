@@ -27,6 +27,7 @@ example/
 ## Backend API
 
 The backend is built with:
+
 - **Express.js** - Web framework
 - **MongoDB** - Database (with Mongoose ODM)
 - **express-validator** - Input validation
@@ -65,6 +66,7 @@ Multiple deployment options are provided:
 ### Quick Start
 
 1. **Set up backend locally**
+
    ```bash
    cd backend
    npm install
@@ -74,6 +76,7 @@ Multiple deployment options are provided:
    ```
 
 2. **Deploy to AWS ECS**
+
    ```bash
    cd aws/scripts
    chmod +x deploy.sh setup-secrets.sh
@@ -91,18 +94,21 @@ Multiple deployment options are provided:
 ## Database Setup
 
 ### Option 1: MongoDB Atlas (Recommended for development)
+
 1. Create account at https://www.mongodb.com/cloud/atlas
 2. Create a cluster
 3. Get connection string
 4. Update `.env` file
 
 ### Option 2: AWS DocumentDB (Recommended for production)
+
 1. Create DocumentDB cluster in AWS
 2. Configure security groups
 3. Get connection endpoint
 4. Update secrets in AWS Secrets Manager
 
 ### Option 3: Local MongoDB
+
 ```bash
 docker run -d -p 27017:27017 --name mongodb mongo:7
 ```
@@ -116,15 +122,15 @@ See `backend/.env.example` for all required environment variables.
 Update the frontend `bookingService.ts` to use the API:
 
 ```typescript
-const API_URL = process.env.VITE_API_URL || 'http://localhost:3000/api'
+const API_URL = process.env.VITE_API_URL || "http://localhost:3000/api";
 
 export const bookingService = {
   getAllBookings: async (): Promise<Booking[]> => {
-    const response = await fetch(`${API_URL}/bookings`)
-    return response.json()
+    const response = await fetch(`${API_URL}/bookings`);
+    return response.json();
   },
   // ... other methods
-}
+};
 ```
 
 ## Security Considerations
@@ -162,4 +168,3 @@ npm test
 ## License
 
 Same as main project
-

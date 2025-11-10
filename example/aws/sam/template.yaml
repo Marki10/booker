@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Booker Backend API using AWS SAM
 
@@ -32,44 +32,44 @@ Resources:
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
         AllowOrigin: "'*'"
       DefinitionBody:
-        openapi: '3.0.1'
+        openapi: "3.0.1"
         info:
           title: Booker API
-          version: '1.0'
+          version: "1.0"
         paths:
           /health:
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${HealthCheckFunction.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${HealthCheckFunction.Arn}/invocations"
           /bookings:
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetBookingsFunction.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetBookingsFunction.Arn}/invocations"
             post:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateBookingFunction.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateBookingFunction.Arn}/invocations"
           /bookings/{id}:
             get:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetBookingFunction.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetBookingFunction.Arn}/invocations"
             put:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateBookingFunction.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateBookingFunction.Arn}/invocations"
             delete:
               x-amazon-apigateway-integration:
                 httpMethod: POST
                 type: aws_proxy
-                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteBookingFunction.Arn}/invocations'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteBookingFunction.Arn}/invocations"
 
   # Health Check Function
   HealthCheckFunction:
@@ -178,11 +178,10 @@ Resources:
 Outputs:
   ApiUrl:
     Description: API Gateway endpoint URL
-    Value: !Sub 'https://${BookingsApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+    Value: !Sub "https://${BookingsApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}"
     Export:
-      Name: !Sub '${AWS::StackName}-ApiUrl'
+      Name: !Sub "${AWS::StackName}-ApiUrl"
 
   HealthCheckUrl:
     Description: Health check endpoint
-    Value: !Sub 'https://${BookingsApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/health'
-
+    Value: !Sub "https://${BookingsApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/health"

@@ -1,4 +1,4 @@
-import type { Booking, BookingFormData } from '../types/booking'
+import type { Booking, BookingFormData } from "../types/booking";
 
 export const bookingToFormData = (booking: Booking): BookingFormData => {
   return {
@@ -8,6 +8,5 @@ export const bookingToFormData = (booking: Booking): BookingFormData => {
     time: booking.time,
     duration: booking.duration,
     notes: booking.notes,
-  }
-}
-
+  };
+};

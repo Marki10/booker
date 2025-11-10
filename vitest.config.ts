@@ -8,7 +8,7 @@ export default defineConfig({
     setupFiles: ["src/setupTests.ts"],
     globals: true,
     css: true,
-    pool: 'threads',
+    pool: "threads",
   },
   esbuild: {
     jsx: "automatic",

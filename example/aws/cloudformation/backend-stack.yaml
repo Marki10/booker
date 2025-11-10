@@ -1,5 +1,5 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Booker Backend Infrastructure'
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Booker Backend Infrastructure"
 
 Parameters:
   Environment:
@@ -9,15 +9,15 @@ Parameters:
       - development
       - staging
       - production
-  
+
   VpcId:
     Type: AWS::EC2::VPC::Id
     Description: VPC ID where resources will be deployed
-  
+
   SubnetIds:
     Type: List<AWS::EC2::Subnet::Id>
     Description: List of subnet IDs for ECS service
-  
+
   DatabaseEndpoint:
     Type: String
     Description: DocumentDB cluster endpoint
@@ -27,7 +27,7 @@ Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: !Sub 'booker-backend-${Environment}'
+      ClusterName: !Sub "booker-backend-${Environment}"
       CapacityProviders:
         - FARGATE
         - FARGATE_SPOT
@@ -65,7 +65,7 @@ Resources:
   ECSSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub 'booker-backend-sg-${Environment}'
+      GroupName: !Sub "booker-backend-sg-${Environment}"
       GroupDescription: Security group for Booker backend ECS service
       VpcId: !Ref VpcId
       SecurityGroupIngress:
@@ -81,7 +81,7 @@ Resources:
   ApplicationLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      Name: !Sub 'booker-backend-alb-${Environment}'
+      Name: !Sub "booker-backend-alb-${Environment}"
       Type: application
       Scheme: internet-facing
       Subnets: !Ref SubnetIds
@@ -92,7 +92,7 @@ Resources:
   ALBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub 'booker-backend-alb-sg-${Environment}'
+      GroupName: !Sub "booker-backend-alb-sg-${Environment}"
       GroupDescription: Security group for ALB
       VpcId: !Ref VpcId
       SecurityGroupIngress:
@@ -109,7 +109,7 @@ Resources:
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: !Sub 'booker-backend-tg-${Environment}'
+      Name: !Sub "booker-backend-tg-${Environment}"
       Port: 3000
       Protocol: HTTP
       VpcId: !Ref VpcId
@@ -145,7 +145,7 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
@@ -156,19 +156,19 @@ Resources:
       Policies:
         - PolicyName: SecretsManagerAccess
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
               - Effect: Allow
                 Action:
                   - secretsmanager:GetSecretValue
-                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:booker/*'
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:booker/*"
 
   # IAM Role for ECS Task
   ECSTaskRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
@@ -180,7 +180,7 @@ Resources:
     Type: AWS::ECS::Service
     DependsOn: ALBListener
     Properties:
-      ServiceName: !Sub 'booker-backend-service-${Environment}'
+      ServiceName: !Sub "booker-backend-service-${Environment}"
       Cluster: !Ref ECSCluster
       TaskDefinition: !Ref TaskDefinition
       DesiredCount: 2
@@ -211,7 +211,7 @@ Resources:
       TaskRoleArn: !GetAtt ECSTaskRole.Arn
       ContainerDefinitions:
         - Name: booker-backend
-          Image: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/booker-backend:latest'
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/booker-backend:latest"
           Essential: true
           PortMappings:
             - ContainerPort: 3000
@@ -220,10 +220,10 @@ Resources:
             - Name: NODE_ENV
               Value: !Ref Environment
             - Name: PORT
-              Value: '3000'
+              Value: "3000"
           Secrets:
             - Name: MONGODB_URI
-              ValueFrom: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:booker/mongodb-uri'
+              ValueFrom: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:booker/mongodb-uri"
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -244,23 +244,22 @@ Outputs:
     Description: ECS Cluster Name
     Value: !Ref ECSCluster
     Export:
-      Name: !Sub '${AWS::StackName}-ECSCluster'
+      Name: !Sub "${AWS::StackName}-ECSCluster"
 
   LoadBalancerDNS:
     Description: Application Load Balancer DNS
     Value: !GetAtt ApplicationLoadBalancer.DNSName
     Export:
-      Name: !Sub '${AWS::StackName}-LoadBalancerDNS'
+      Name: !Sub "${AWS::StackName}-LoadBalancerDNS"
 
   ECRRepositoryURI:
     Description: ECR Repository URI
-    Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepository}'
+    Value: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepository}"
     Export:
-      Name: !Sub '${AWS::StackName}-ECRRepositoryURI'
+      Name: !Sub "${AWS::StackName}-ECRRepositoryURI"
 
   TargetGroupArn:
     Description: Target Group ARN
     Value: !Ref TargetGroup
     Export:
-      Name: !Sub '${AWS::StackName}-TargetGroupArn'
-
+      Name: !Sub "${AWS::StackName}-TargetGroupArn"

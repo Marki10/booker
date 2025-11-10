@@ -12,14 +12,17 @@ declare global {
         duration: string;
         notes?: string;
       }): Chainable<void>;
-      editBooking(originalTitle: string, updates: Partial<{
-        name: string;
-        email: string;
-        date: string | (() => string);
-        time: string;
-        duration: string;
-        notes: string;
-      }>): Chainable<void>;
+      editBooking(
+        originalTitle: string,
+        updates: Partial<{
+          name: string;
+          email: string;
+          date: string | (() => string);
+          time: string;
+          duration: string;
+          notes: string;
+        }>,
+      ): Chainable<void>;
     }
   }
 }
@@ -73,7 +76,8 @@ Cypress.Commands.add("editBooking", (originalTitle, updates) => {
     cy.get('[data-testid="booking-form-email"]').clear().type(updates.email);
   }
   if (updates.date) {
-    const dateValue = typeof updates.date === "function" ? updates.date() : updates.date;
+    const dateValue =
+      typeof updates.date === "function" ? updates.date() : updates.date;
     cy.get('[data-testid="booking-form-date"]').clear().type(dateValue);
   }
   if (updates.time) {

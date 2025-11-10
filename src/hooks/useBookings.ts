@@ -1,79 +1,79 @@
-import { useState, useEffect, useCallback } from 'react'
-import type { Booking, BookingFormData } from '../types/booking'
-import { bookingService } from '../services/bookingService'
+import { useState, useEffect, useCallback } from "react";
+import type { Booking, BookingFormData } from "../types/booking";
+import { bookingService } from "../services/bookingService";
 
 export const useBookings = () => {
-  const [bookings, setBookings] = useState<Booking[]>([])
-  const [isSyncing, setIsSyncing] = useState(false)
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState<{
-    lastSync: string | null
-    pendingSync: boolean
-    backendAvailable: boolean
+    lastSync: string | null;
+    pendingSync: boolean;
+    backendAvailable: boolean;
   }>({
     lastSync: null,
     pendingSync: false,
     backendAvailable: false,
-  })
+  });
 
   const updateSyncStatus = useCallback(() => {
-    const status = bookingService.getSyncStatus()
-    setSyncStatus(status)
-  }, [])
+    const status = bookingService.getSyncStatus();
+    setSyncStatus(status);
+  }, []);
 
   const loadBookings = useCallback(() => {
-    const allBookings = bookingService.getAllBookings()
-    setBookings(allBookings)
-    updateSyncStatus()
-  }, [updateSyncStatus])
+    const allBookings = bookingService.getAllBookings();
+    setBookings(allBookings);
+    updateSyncStatus();
+  }, [updateSyncStatus]);
 
   const syncWithBackend = useCallback(async () => {
-    setIsSyncing(true)
+    setIsSyncing(true);
     try {
-      const result = await bookingService.syncWithBackend()
+      const result = await bookingService.syncWithBackend();
       if (result.success) {
-        loadBookings()
+        loadBookings();
       }
-      updateSyncStatus()
+      updateSyncStatus();
     } catch (error) {
-      console.error('Sync error:', error)
+      console.error("Sync error:", error);
     } finally {
-      setIsSyncing(false)
+      setIsSyncing(false);
     }
-  }, [loadBookings, updateSyncStatus])
+  }, [loadBookings, updateSyncStatus]);
 
   const createBooking = useCallback(
     async (formData: BookingFormData) => {
-      await bookingService.createBooking(formData)
-      loadBookings()
+      await bookingService.createBooking(formData);
+      loadBookings();
     },
-    [loadBookings]
-  )
+    [loadBookings],
+  );
 
   const updateBooking = useCallback(
     async (id: string, formData: BookingFormData) => {
-      await bookingService.updateBooking(id, formData)
-      loadBookings()
+      await bookingService.updateBooking(id, formData);
+      loadBookings();
     },
-    [loadBookings]
-  )
+    [loadBookings],
+  );
 
   const deleteBooking = useCallback(
     async (id: string) => {
-      if (confirm('Are you sure you want to delete this booking?')) {
-        await bookingService.deleteBooking(id)
-        loadBookings()
+      if (confirm("Are you sure you want to delete this booking?")) {
+        await bookingService.deleteBooking(id);
+        loadBookings();
       }
     },
-    [loadBookings]
-  )
+    [loadBookings],
+  );
 
   useEffect(() => {
     // Load from localStorage first (instant)
-    loadBookings()
+    loadBookings();
 
     // Then try to sync with backend
-    syncWithBackend()
-  }, [loadBookings, syncWithBackend])
+    syncWithBackend();
+  }, [loadBookings, syncWithBackend]);
 
   return {
     bookings,
@@ -84,6 +84,5 @@ export const useBookings = () => {
     updateBooking,
     deleteBooking,
     loadBookings,
-  }
-}
-
+  };
+};

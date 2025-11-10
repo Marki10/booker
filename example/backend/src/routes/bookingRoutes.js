@@ -1,4 +1,4 @@
-import express from 'express'
+import express from "express";
 import {
   getBookings,
   getBookingById,
@@ -6,32 +6,34 @@ import {
   updateBooking,
   deleteBooking,
   getBookingsByDate,
-  checkAvailability
-} from '../controllers/bookingController.js'
-import { validateBooking, validateBookingUpdate } from '../middleware/validation.js'
+  checkAvailability,
+} from "../controllers/bookingController.js";
+import {
+  validateBooking,
+  validateBookingUpdate,
+} from "../middleware/validation.js";
 
-const router = express.Router()
+const router = express.Router();
 
 // Get all bookings
-router.get('/', getBookings)
+router.get("/", getBookings);
 
 // Get booking by ID
-router.get('/:id', getBookingById)
+router.get("/:id", getBookingById);
 
 // Get bookings by date
-router.get('/date/:date', getBookingsByDate)
+router.get("/date/:date", getBookingsByDate);
 
 // Check availability
-router.post('/availability', checkAvailability)
+router.post("/availability", checkAvailability);
 
 // Create new booking
-router.post('/', validateBooking, createBooking)
+router.post("/", validateBooking, createBooking);
 
 // Update booking
-router.put('/:id', validateBookingUpdate, updateBooking)
+router.put("/:id", validateBookingUpdate, updateBooking);
 
 // Delete booking
-router.delete('/:id', deleteBooking)
+router.delete("/:id", deleteBooking);
 
-export default router
-
+export default router;

@@ -32,6 +32,7 @@ aws/
    - DocumentDB or MongoDB Atlas cluster
 
 2. **Setup Secrets**
+
    ```bash
    cd scripts
    chmod +x setup-secrets.sh
@@ -39,6 +40,7 @@ aws/
    ```
 
 3. **Deploy Infrastructure**
+
    ```bash
    aws cloudformation create-stack \
      --stack-name booker-backend \
@@ -61,6 +63,7 @@ aws/
 ### Option 2: AWS SAM (Serverless)
 
 1. **Install SAM CLI**
+
    ```bash
    brew install aws-sam-cli  # macOS
    # or
@@ -68,6 +71,7 @@ aws/
    ```
 
 2. **Build and Deploy**
+
    ```bash
    cd sam
    sam build
@@ -82,6 +86,7 @@ aws/
 ### Option 3: Docker Compose (Local/Development)
 
 1. **Run with Docker Compose**
+
    ```bash
    cd docker
    docker-compose up -d
@@ -94,26 +99,31 @@ aws/
 ## Environment Variables
 
 ### Required
+
 - `MONGODB_URI` - MongoDB connection string
 - `FRONTEND_URL` - Frontend URL for CORS
 
 ### Optional
+
 - `PORT` - Server port (default: 3000)
 - `NODE_ENV` - Environment (development/production)
 
 ## Database Options
 
 ### AWS DocumentDB
+
 ```bash
 MONGODB_URI=mongodb://username:password@cluster-endpoint:27017/booker?tls=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false
 ```
 
 ### MongoDB Atlas
+
 ```bash
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/booker?retryWrites=true&w=majority
 ```
 
 ### Local MongoDB
+
 ```bash
 MONGODB_URI=mongodb://localhost:27017/booker
 ```
@@ -174,6 +184,7 @@ MONGODB_URI=mongodb://localhost:27017/booker
 ## Troubleshooting
 
 1. **Check ECS Service Events**
+
    ```bash
    aws ecs describe-services \
      --cluster booker-backend-production \
@@ -181,11 +192,13 @@ MONGODB_URI=mongodb://localhost:27017/booker
    ```
 
 2. **Check CloudWatch Logs**
+
    ```bash
    aws logs tail /ecs/booker-backend --follow
    ```
 
 3. **Check Task Status**
+
    ```bash
    aws ecs list-tasks --cluster booker-backend-production
    ```
@@ -198,6 +211,7 @@ MONGODB_URI=mongodb://localhost:27017/booker
 ## CI/CD Integration
 
 ### GitHub Actions Example
+
 ```yaml
 name: Deploy to AWS
 
@@ -226,4 +240,3 @@ jobs:
 - [AWS CloudFormation Documentation](https://docs.aws.amazon.com/cloudformation/)
 - [AWS SAM Documentation](https://docs.aws.amazon.com/serverless-application-model/)
 - [Docker Documentation](https://docs.docker.com/)
-

@@ -1,12 +1,12 @@
-import type { Booking } from '../../types/booking'
-import { BookingList } from '../BookingList'
+import type { Booking } from "../../types/booking";
+import { BookingList } from "../BookingList";
 
 interface BookingSidebarProps {
-  bookings: Booking[]
-  selectedDate: string | null
-  onClearDate: () => void
-  onEdit: (booking: Booking) => void
-  onDelete: (id: string) => void
+  bookings: Booking[];
+  selectedDate: string | null;
+  onClearDate: () => void;
+  onEdit: (booking: Booking) => void;
+  onDelete: (id: string) => void;
 }
 
 export const BookingSidebar = ({
@@ -33,6 +33,5 @@ export const BookingSidebar = ({
         <BookingList bookings={bookings} onEdit={onEdit} onDelete={onDelete} />
       </div>
     </div>
-  )
-}
-
+  );
+};

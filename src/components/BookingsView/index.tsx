@@ -1,17 +1,17 @@
-import type { Booking } from '../../types/booking'
-import { BookingCalendar } from '../BookingCalendar'
-import { BookingList } from '../BookingList'
-import { BookingSidebar } from '../BookingSidebar'
-import { DateFilter } from '../DateFilter'
+import type { Booking } from "../../types/booking";
+import { BookingCalendar } from "../BookingCalendar";
+import { BookingList } from "../BookingList";
+import { BookingSidebar } from "../BookingSidebar";
+import { DateFilter } from "../DateFilter";
 
 interface BookingsViewProps {
-  viewMode: 'list' | 'calendar'
-  bookings: Booking[]
-  selectedDate: string
-  onDateSelect: (date: string) => void
-  onClearDate: () => void
-  onEdit: (booking: Booking) => void
-  onDelete: (id: string) => void
+  viewMode: "list" | "calendar";
+  bookings: Booking[];
+  selectedDate: string;
+  onDateSelect: (date: string) => void;
+  onClearDate: () => void;
+  onEdit: (booking: Booking) => void;
+  onDelete: (id: string) => void;
 }
 
 export const BookingsView = ({
@@ -25,9 +25,9 @@ export const BookingsView = ({
 }: BookingsViewProps) => {
   const filteredBookings = selectedDate
     ? bookings.filter((booking) => booking.date === selectedDate)
-    : bookings
+    : bookings;
 
-  if (viewMode === 'calendar') {
+  if (viewMode === "calendar") {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         <div className="lg:col-span-2 order-2 lg:order-1">
@@ -47,14 +47,17 @@ export const BookingsView = ({
           />
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div>
       <DateFilter selectedDate={selectedDate} onClear={onClearDate} />
-      <BookingList bookings={filteredBookings} onEdit={onEdit} onDelete={onDelete} />
+      <BookingList
+        bookings={filteredBookings}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
     </div>
-  )
-}
-
+  );
+};

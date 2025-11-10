@@ -27,11 +27,13 @@ npm install
 ## Running the Server
 
 ### Development
+
 ```bash
 npm run dev
 ```
 
 ### Production
+
 ```bash
 npm start
 ```
@@ -39,9 +41,11 @@ npm start
 ## API Endpoints
 
 ### Health Check
+
 - `GET /health` - Check server status
 
 ### Bookings
+
 - `GET /api/bookings` - Get all bookings
 - `GET /api/bookings/:id` - Get booking by ID
 - `GET /api/bookings/date/:date` - Get bookings by date
@@ -53,6 +57,7 @@ npm start
 ## Database
 
 The application uses MongoDB. You can use:
+
 - Local MongoDB instance
 - MongoDB Atlas (cloud)
 - AWS DocumentDB
@@ -69,4 +74,3 @@ The application uses MongoDB. You can use:
 ```bash
 npm test
 ```
-

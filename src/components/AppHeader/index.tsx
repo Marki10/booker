@@ -1,21 +1,21 @@
-import { Calendar } from 'lucide-react'
-import { SyncStatusButton } from '../SyncStatusButton'
-import { ViewModeToggle } from '../ViewModeToggle'
-import { NewBookingButton } from '../NewBookingButton'
+import { Calendar } from "lucide-react";
+import { SyncStatusButton } from "../SyncStatusButton";
+import { ViewModeToggle } from "../ViewModeToggle";
+import { NewBookingButton } from "../NewBookingButton";
 
 interface AppHeaderProps {
-  onTitleClick: () => void
-  onSync: () => void
-  isSyncing: boolean
+  onTitleClick: () => void;
+  onSync: () => void;
+  isSyncing: boolean;
   syncStatus: {
-    lastSync: string | null
-    pendingSync: boolean
-    backendAvailable: boolean
-  }
-  viewMode: 'list' | 'calendar'
-  onViewModeChange: (mode: 'list' | 'calendar') => void
-  showForm: boolean
-  onNewBooking: () => void
+    lastSync: string | null;
+    pendingSync: boolean;
+    backendAvailable: boolean;
+  };
+  viewMode: "list" | "calendar";
+  onViewModeChange: (mode: "list" | "calendar") => void;
+  showForm: boolean;
+  onNewBooking: () => void;
 }
 
 export const AppHeader = ({
@@ -43,7 +43,9 @@ export const AppHeader = ({
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:from-blue-700 group-hover:to-purple-700 transition-all">
                 Booking App
               </h1>
-              <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">Manage your appointments</p>
+              <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">
+                Manage your appointments
+              </p>
             </div>
           </button>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-4">
@@ -52,12 +54,14 @@ export const AppHeader = ({
               isSyncing={isSyncing}
               syncStatus={syncStatus}
             />
-            <ViewModeToggle viewMode={viewMode} onViewModeChange={onViewModeChange} />
+            <ViewModeToggle
+              viewMode={viewMode}
+              onViewModeChange={onViewModeChange}
+            />
             {!showForm && <NewBookingButton onClick={onNewBooking} />}
           </div>
         </div>
       </div>
     </header>
-  )
-}
-
+  );
+};

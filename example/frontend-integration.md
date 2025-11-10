@@ -9,91 +9,86 @@ Replace the in-memory service with API calls:
 ```typescript
 // src/services/bookingService.ts
 
-import type { Booking, BookingFormData } from '../types/booking'
+import type { Booking, BookingFormData } from "../types/booking";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 export const bookingService = {
   // Get all bookings
   getAllBookings: async (): Promise<Booking[]> => {
-    const response = await fetch(`${API_URL}/bookings`)
+    const response = await fetch(`${API_URL}/bookings`);
     if (!response.ok) {
-      throw new Error('Failed to fetch bookings')
+      throw new Error("Failed to fetch bookings");
     }
-    return response.json()
+    return response.json();
   },
 
   // Get booking by ID
   getBookingById: async (id: string): Promise<Booking> => {
-    const response = await fetch(`${API_URL}/bookings/${id}`)
+    const response = await fetch(`${API_URL}/bookings/${id}`);
     if (!response.ok) {
-      throw new Error('Failed to fetch booking')
+      throw new Error("Failed to fetch booking");
     }
-    return response.json()
+    return response.json();
   },
 
   // Create a new booking
   createBooking: async (data: BookingFormData): Promise<Booking> => {
     const response = await fetch(`${API_URL}/bookings`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    })
+    });
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to create booking')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to create booking");
     }
-    return response.json()
+    return response.json();
   },
 
   // Update a booking
   updateBooking: async (id: string, data: Partial<BookingFormData>): Promise<Booking> => {
     const response = await fetch(`${API_URL}/bookings/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    })
+    });
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to update booking')
+      const error = await response.json();
+      throw new Error(error.error || "Failed to update booking");
     }
-    return response.json()
+    return response.json();
   },
 
   // Delete a booking
   deleteBooking: async (id: string): Promise<void> => {
     const response = await fetch(`${API_URL}/bookings/${id}`, {
-      method: 'DELETE',
-    })
+      method: "DELETE",
+    });
     if (!response.ok) {
-      throw new Error('Failed to delete booking')
+      throw new Error("Failed to delete booking");
     }
   },
 
   // Get bookings for a specific date
   getBookingsByDate: async (date: string): Promise<Booking[]> => {
-    const response = await fetch(`${API_URL}/bookings/date/${date}`)
+    const response = await fetch(`${API_URL}/bookings/date/${date}`);
     if (!response.ok) {
-      throw new Error('Failed to fetch bookings')
+      throw new Error("Failed to fetch bookings");
     }
-    return response.json()
+    return response.json();
   },
 
   // Check if a time slot is available
-  isTimeSlotAvailable: async (
-    date: string,
-    time: string,
-    duration: number,
-    excludeBookingId?: string
-  ): Promise<boolean> => {
+  isTimeSlotAvailable: async (date: string, time: string, duration: number, excludeBookingId?: string): Promise<boolean> => {
     const response = await fetch(`${API_URL}/bookings/availability`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         date,
@@ -101,14 +96,14 @@ export const bookingService = {
         duration,
         excludeBookingId,
       }),
-    })
+    });
     if (!response.ok) {
-      throw new Error('Failed to check availability')
+      throw new Error("Failed to check availability");
     }
-    const data = await response.json()
-    return data.available
+    const data = await response.json();
+    return data.available;
   },
-}
+};
 ```
 
 ## Update App.tsx
@@ -233,10 +228,12 @@ Make sure the backend CORS is configured to allow your frontend URL:
 
 ```javascript
 // backend/src/index.js
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  credentials: true
-}))
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    credentials: true,
+  }),
+);
 ```
 
 ## Error Handling
@@ -247,39 +244,35 @@ Add error handling in the BookingForm component:
 // src/components/BookingForm.tsx
 
 const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault()
-  setErrors({})
+  e.preventDefault();
+  setErrors({});
 
   // ... validation
 
   try {
     // Check availability
-    const available = await bookingService.isTimeSlotAvailable(
-      formData.date,
-      formData.time,
-      formData.duration,
-      initialData ? 'existing' : undefined
-    )
+    const available = await bookingService.isTimeSlotAvailable(formData.date, formData.time, formData.duration, initialData ? "existing" : undefined);
 
     if (!available) {
       setErrors({
-        time: 'This time slot is already booked. Please choose another time.',
-      })
-      return
+        time: "This time slot is already booked. Please choose another time.",
+      });
+      return;
     }
 
-    onSubmit(formData)
+    onSubmit(formData);
   } catch (err) {
     setErrors({
-      time: err instanceof Error ? err.message : 'Failed to check availability',
-    })
+      time: err instanceof Error ? err.message : "Failed to check availability",
+    });
   }
-}
+};
 ```
 
 ## Testing
 
 1. Start the backend server:
+
    ```bash
    cd example/backend
    npm install
@@ -287,11 +280,13 @@ const handleSubmit = async (e: FormEvent) => {
    ```
 
 2. Update frontend `.env`:
+
    ```env
    VITE_API_URL=http://localhost:3000/api
    ```
 
 3. Start the frontend:
+
    ```bash
    npm run dev
    ```
@@ -307,4 +302,3 @@ const handleSubmit = async (e: FormEvent) => {
    npm run build
    # Deploy dist/ folder to S3 + CloudFront, Vercel, Netlify, etc.
    ```
-
