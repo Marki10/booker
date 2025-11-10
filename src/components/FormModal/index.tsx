@@ -1,6 +1,6 @@
 import { X } from 'lucide-react'
-import type { BookingFormData } from '../types/booking'
-import { BookingForm } from './BookingForm'
+import type { BookingFormData } from '../../types/booking'
+import { BookingForm } from '../BookingForm'
 
 interface FormModalProps {
   editingBooking: Partial<BookingFormData> | null

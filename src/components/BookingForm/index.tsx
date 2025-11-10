@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import type { BookingFormData } from '../types/booking'
-import { bookingService } from '../services/bookingService'
-import { getTimeSlots, getTodayDate, isPastDateTime } from '../utils/dateUtils'
-import { validateBookingForm } from '../utils/validation'
+import type { BookingFormData } from '../../types/booking'
+import { bookingService } from '../../services/bookingService'
+import { getTimeSlots, getTodayDate, isPastDateTime } from '../../utils/dateUtils'
+import { validateBookingForm } from '../../utils/validation'
 import { Calendar, Clock, User, Mail, FileText } from 'lucide-react'
 
 interface BookingFormProps {

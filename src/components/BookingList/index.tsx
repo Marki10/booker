@@ -1,5 +1,5 @@
-import type { Booking } from '../types/booking'
-import { formatDate, formatTime } from '../utils/dateUtils'
+import type { Booking } from '../../types/booking'
+import { formatDate, formatTime } from '../../utils/dateUtils'
 import { Calendar, Clock, Mail, Trash2, Edit, FileText } from 'lucide-react'
 
 interface BookingListProps {

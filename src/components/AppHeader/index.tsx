@@ -1,7 +1,7 @@
 import { Calendar } from 'lucide-react'
-import { SyncStatusButton } from './SyncStatusButton'
-import { ViewModeToggle } from './ViewModeToggle'
-import { NewBookingButton } from './NewBookingButton'
+import { SyncStatusButton } from '../SyncStatusButton'
+import { ViewModeToggle } from '../ViewModeToggle'
+import { NewBookingButton } from '../NewBookingButton'
 
 interface AppHeaderProps {
   onTitleClick: () => void

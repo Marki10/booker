@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import type { Booking } from '../types/booking'
-import { formatDate, getTodayDate } from '../utils/dateUtils'
+import type { Booking } from '../../types/booking'
+import { formatDate, getTodayDate } from '../../utils/dateUtils'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface BookingCalendarProps {

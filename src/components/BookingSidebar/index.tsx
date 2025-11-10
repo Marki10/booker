@@ -1,5 +1,5 @@
-import type { Booking } from '../types/booking'
-import { BookingList } from './BookingList'
+import type { Booking } from '../../types/booking'
+import { BookingList } from '../BookingList'
 
 interface BookingSidebarProps {
   bookings: Booking[]

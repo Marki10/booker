@@ -1,8 +1,8 @@
-import type { Booking } from '../types/booking'
-import { BookingCalendar } from './BookingCalendar'
-import { BookingList } from './BookingList'
-import { BookingSidebar } from './BookingSidebar'
-import { DateFilter } from './DateFilter'
+import type { Booking } from '../../types/booking'
+import { BookingCalendar } from '../BookingCalendar'
+import { BookingList } from '../BookingList'
+import { BookingSidebar } from '../BookingSidebar'
+import { DateFilter } from '../DateFilter'
 
 interface BookingsViewProps {
   viewMode: 'list' | 'calendar'
