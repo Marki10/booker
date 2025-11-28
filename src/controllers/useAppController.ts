@@ -1,6 +1,7 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type { Booking, BookingFormData } from "../types/booking";
 import { useBookings } from "../hooks/useBookings";
+import { generateSampleBookings } from "../utils/generateSampleBookings";
 
 export type ViewMode = "list" | "calendar";
 
@@ -18,6 +19,7 @@ export const useAppController = () => {
     createBooking,
     updateBooking,
     deleteBooking,
+    loadBookings,
   } = useBookings();
 
   const handleCreateBooking = useCallback(
@@ -82,6 +84,16 @@ export const useAppController = () => {
   const handleClearDate = useCallback(() => {
     setSelectedDate("");
   }, []);
+
+  // Generate sample bookings on first load if no bookings exist
+  useEffect(() => {
+    if (bookings.length === 0) {
+      generateSampleBookings().then(() => {
+        // Reload bookings after generating samples
+        loadBookings();
+      });
+    }
+  }, []); // Only run once on mount
 
   return {
     showForm,
