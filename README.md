@@ -2,6 +2,10 @@
 
 A modern, responsive booking application built with React, TypeScript, and Tailwind CSS.
 
+## 🚀 Live Demo
+
+Try the app live at: **[https://marki10.github.io/booker/](https://marki10.github.io/booker/)**
+
 ## Features
 
 - 📅 **Calendar View** - Visual calendar interface to browse bookings by date
@@ -60,6 +64,14 @@ npm run build
 ```
 
 The production build will be in the `dist` directory.
+
+### Deploying to GitHub Pages
+
+```bash
+npm run deploy
+```
+
+This will build the project and deploy it to the `gh-pages` branch. The site will be available at `https://YOUR_USERNAME.github.io/booker/`
 
 ### Preview Production Build
 
@@ -156,6 +168,8 @@ See the `example/backend/` directory for a sample backend and `example/aws/` for
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
+- `npm run predeploy` - Build project before deployment
+- `npm run deploy` - Deploy to GitHub Pages
 - `npm run lint` - Run ESLint
 - `npm run test` - Run unit tests (Vitest)
 - `npm run test:e2e` - Run Cypress E2E headless
