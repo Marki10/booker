@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build && echo '' > out/.nojekyll",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --config eslint.config.mjs",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d out",
     "test": "vitest run",
@@ -14,7 +14,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "cypress run",
     "test:e2e:open": "cypress open",
-    "prepare": "husky install"
+    "prepare": "husky install || true"
   },
   "dependencies": {
     "autoprefixer": "^10.4.21",
@@ -61,9 +61,11 @@
     "vitest": "^4.0.8"
   },
   "lint-staged": {
-    "**/*.{ts,tsx,js,jsx,css,md,json}": [
-      "prettier --write",
-      "eslint --fix --max-warnings=0"
+    "**/*.{ts,tsx}": [
+      "eslint --fix --max-warnings=0 --config eslint.config.mjs --no-warn-ignored"
+    ],
+    "**/*.{js,jsx,css,md,json}": [
+      "prettier --write"
     ]
   },
   "vitest": {

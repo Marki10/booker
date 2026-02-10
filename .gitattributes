@@ -101,6 +101,9 @@ pnpm-lock.yaml text eol=lf
 # Line ending normalization for Unix
 *.sh text eol=lf
 
+# Husky hooks - must use LF line endings
+.husky/** text eol=lf
+
 # Exclude node_modules from line ending normalization
 node_modules/** -text
 
