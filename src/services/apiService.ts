@@ -1,6 +1,10 @@
 import type { Booking, BookingFormData } from "../types/booking";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+// Next.js makes NEXT_PUBLIC_* env vars available at build time
+const API_URL =
+  (typeof process !== "undefined" &&
+    process.env.NEXT_PUBLIC_API_URL) ||
+  "http://localhost:3000/api";
 const API_TIMEOUT = 5000; // 5 seconds
 
 interface ApiError {

@@ -12,6 +12,9 @@ export interface SyncMetadata {
 export const storageService = {
   // Get all bookings from localStorage
   getBookings(): Booking[] {
+    if (typeof window === "undefined" || !this.isAvailable()) {
+      return [];
+    }
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (!stored) return [];
@@ -24,6 +27,9 @@ export const storageService = {
 
   // Save bookings to localStorage
   saveBookings(bookings: Booking[]): void {
+    if (typeof window === "undefined" || !this.isAvailable()) {
+      return;
+    }
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
     } catch (error) {
@@ -39,6 +45,13 @@ export const storageService = {
 
   // Get sync metadata
   getSyncMetadata(): SyncMetadata {
+    if (typeof window === "undefined" || !this.isAvailable()) {
+      return {
+        lastSync: null,
+        lastSyncId: null,
+        pendingSync: false,
+      };
+    }
     try {
       const stored = localStorage.getItem(SYNC_META_KEY);
       if (!stored) {
@@ -61,6 +74,9 @@ export const storageService = {
 
   // Save sync metadata
   saveSyncMetadata(metadata: SyncMetadata): void {
+    if (typeof window === "undefined" || !this.isAvailable()) {
+      return;
+    }
     try {
       localStorage.setItem(SYNC_META_KEY, JSON.stringify(metadata));
     } catch (error) {
@@ -70,6 +86,9 @@ export const storageService = {
 
   // Clear all data
   clearAll(): void {
+    if (typeof window === "undefined" || !this.isAvailable()) {
+      return;
+    }
     try {
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(SYNC_META_KEY);
@@ -80,6 +99,9 @@ export const storageService = {
 
   // Check if localStorage is available
   isAvailable(): boolean {
+    if (typeof window === "undefined") {
+      return false;
+    }
     try {
       const test = "__storage_test__";
       localStorage.setItem(test, test);

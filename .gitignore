@@ -10,6 +10,8 @@ coverage/
 # Production
 dist/
 build/
+out/
+.next/
 *.local
 
 # Environment variables
@@ -53,7 +55,12 @@ Desktop.ini
 *.tsbuildinfo
 *.tsbuildinfo.*
 
-# Vite
+# Next.js
+.next/
+out/
+.vercel
+
+# Vite (legacy)
 .vite/
 vite.config.js.timestamp-*
 

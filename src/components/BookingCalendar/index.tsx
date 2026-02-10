@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import type { Booking } from "../../types/booking";
 import { formatDate, getTodayDate } from "../../utils/dateUtils";

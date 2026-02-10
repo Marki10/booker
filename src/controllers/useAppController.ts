@@ -93,7 +93,7 @@ export const useAppController = () => {
         loadBookings();
       });
     }
-  }, []); // Only run once on mount
+  }, [bookings.length, loadBookings]);
 
   return {
     showForm,
