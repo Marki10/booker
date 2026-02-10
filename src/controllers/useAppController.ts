@@ -1,7 +1,8 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import type { Booking, BookingFormData } from "../types/booking";
 import { useBookings } from "../hooks/useBookings";
 import { generateSampleBookings } from "../utils/generateSampleBookings";
+import { storageService } from "../services/storageService";
 
 export type ViewMode = "list" | "calendar";
 
@@ -86,14 +87,21 @@ export const useAppController = () => {
   }, []);
 
   // Generate sample bookings on first load if no bookings exist
+  const hasCheckedForSamples = useRef(false);
   useEffect(() => {
-    if (bookings.length === 0) {
+    // Only check once on mount, not on every render
+    if (hasCheckedForSamples.current) return;
+    hasCheckedForSamples.current = true;
+
+    // Check localStorage directly to see if bookings already exist
+    const existingBookings = storageService.getBookings();
+    if (existingBookings.length === 0) {
       generateSampleBookings().then(() => {
         // Reload bookings after generating samples
         loadBookings();
       });
     }
-  }, [bookings.length, loadBookings]);
+  }, [loadBookings]);
 
   return {
     showForm,
