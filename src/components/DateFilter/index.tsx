@@ -1,6 +1,7 @@
+import { memo } from "react";
 import type { DateFilterProps } from "../../types/interfaces";
 
-export const DateFilter = ({ selectedDate, onClear }: DateFilterProps) => {
+export const DateFilter = memo(({ selectedDate, onClear }: DateFilterProps) => {
   if (!selectedDate) return null;
 
   return (
@@ -17,4 +18,6 @@ export const DateFilter = ({ selectedDate, onClear }: DateFilterProps) => {
       </button>
     </div>
   );
-};
+});
+
+DateFilter.displayName = "DateFilter";

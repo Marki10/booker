@@ -1,7 +1,7 @@
-import type { ChangeEvent } from "react";
+import { memo, type ChangeEvent } from "react";
 import type { SelectInputProps } from "../../types/interfaces";
 
-export const SelectInput = ({
+export const SelectInput = memo(({
   id,
   value,
   onChange,
@@ -36,4 +36,6 @@ export const SelectInput = ({
       ))}
     </select>
   );
-};
+});
+
+SelectInput.displayName = "SelectInput";

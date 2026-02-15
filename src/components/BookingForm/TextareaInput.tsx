@@ -1,7 +1,7 @@
-import type { ChangeEvent } from "react";
+import { memo, type ChangeEvent } from "react";
 import type { TextareaInputProps } from "../../types/interfaces";
 
-export const TextareaInput = ({
+export const TextareaInput = memo(({
   id,
   value,
   onChange,
@@ -24,4 +24,6 @@ export const TextareaInput = ({
       data-testid={testId || id}
     />
   );
-};
+});
+
+TextareaInput.displayName = "TextareaInput";

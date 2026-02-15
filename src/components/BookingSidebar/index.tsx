@@ -1,7 +1,8 @@
+import { memo } from "react";
 import type { BookingSidebarProps } from "../../types/interfaces";
 import { BookingList } from "../BookingList";
 
-export const BookingSidebar = ({
+export const BookingSidebar = memo(({
   bookings,
   selectedDate,
   onClearDate,
@@ -26,4 +27,6 @@ export const BookingSidebar = ({
       </div>
     </div>
   );
-};
+});
+
+BookingSidebar.displayName = "BookingSidebar";

@@ -1,10 +1,11 @@
+import { memo } from "react";
 import type { BookingsViewProps } from "../../types/interfaces";
 import { BookingCalendar } from "../BookingCalendar";
 import { BookingList } from "../BookingList";
 import { BookingSidebar } from "../BookingSidebar";
 import { DateFilter } from "../DateFilter";
 
-export const BookingsView = ({
+export const BookingsView = memo(({
   viewMode,
   bookings,
   selectedDate,
@@ -50,4 +51,6 @@ export const BookingsView = ({
       />
     </div>
   );
-};
+});
+
+BookingsView.displayName = "BookingsView";

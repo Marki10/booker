@@ -1,6 +1,7 @@
+import { memo } from "react";
 import type { FormFieldProps } from "../../types/interfaces";
 
-export const FormField = ({
+export const FormField = memo(({
   id,
   label,
   icon,
@@ -33,4 +34,6 @@ export const FormField = ({
       )}
     </div>
   );
-};
+});
+
+FormField.displayName = "FormField";

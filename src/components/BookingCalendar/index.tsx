@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import type { Booking } from "../../types/interfaces";
 import type { BookingCalendarProps } from "../../types/interfaces";
 import { formatDate, getTodayDate } from "../../utils/dateUtils";
 import { monthNames, dayNames } from "../../data/calendarData";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export const BookingCalendar = ({
+export const BookingCalendar = memo(({
   bookings,
   selectedDate,
   onDateSelect,
@@ -187,4 +187,6 @@ export const BookingCalendar = ({
       )}
     </div>
   );
-};
+});
+
+BookingCalendar.displayName = "BookingCalendar";

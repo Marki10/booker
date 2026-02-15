@@ -1,7 +1,7 @@
-import type { ChangeEvent } from "react";
+import { memo, type ChangeEvent } from "react";
 import type { TextInputProps } from "../../types/interfaces";
 
-export const TextInput = ({
+export const TextInput = memo(({
   id,
   value,
   onChange,
@@ -37,4 +37,6 @@ export const TextInput = ({
       data-testid={testId || id}
     />
   );
-};
+});
+
+TextInput.displayName = "TextInput";

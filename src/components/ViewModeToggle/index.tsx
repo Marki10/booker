@@ -1,6 +1,7 @@
+import { memo } from "react";
 import type { ViewModeToggleProps } from "../../types/interfaces";
 
-export const ViewModeToggle = ({
+export const ViewModeToggle = memo(({
   viewMode,
   onViewModeChange,
 }: ViewModeToggleProps) => {
@@ -39,4 +40,6 @@ export const ViewModeToggle = ({
       </button>
     </div>
   );
-};
+});
+
+ViewModeToggle.displayName = "ViewModeToggle";

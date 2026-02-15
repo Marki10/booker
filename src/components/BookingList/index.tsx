@@ -1,8 +1,9 @@
+import { memo } from "react";
 import type { BookingListProps } from "../../types/interfaces";
 import { formatDate, formatTime } from "../../utils/dateUtils";
 import { Calendar, Clock, Mail, Trash2, Edit, FileText } from "lucide-react";
 
-export const BookingList = ({
+export const BookingList = memo(({
   bookings,
   onEdit,
   onDelete,
@@ -132,4 +133,6 @@ export const BookingList = ({
       ))}
     </div>
   );
-};
+});
+
+BookingList.displayName = "BookingList";
