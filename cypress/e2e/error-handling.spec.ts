@@ -20,7 +20,6 @@ describe("Error Handling", () => {
     cy.get('[data-testid="sync-button"]').click();
     cy.wait(["@health", "@bookings"]);
     cy.get('[data-testid="sync-status"]').should("not.exist");
-    // UI should still be functional
     cy.get('[data-testid="booking-list"], [data-testid="booking-calendar"]').should(
       "exist",
     );
@@ -45,5 +44,34 @@ describe("Error Handling", () => {
       "contain",
       testData.apiError.name,
     );
+  });
+
+  it("should handle network errors gracefully", () => {
+    cy.intercept("GET", "http://localhost:3000/api/bookings", {
+      forceNetworkError: true,
+    }).as("networkError");
+    cy.intercept("GET", "http://localhost:3000/health", {
+      forceNetworkError: true,
+    }).as("healthError");
+
+    cy.get('[data-testid="sync-button"]').click();
+    cy.get('[data-testid="booking-list"], [data-testid="booking-calendar"]').should(
+      "exist",
+    );
+    cy.get('[data-testid="new-booking-button"]').should("be.visible");
+  });
+
+  it("should display error messages without crashing", () => {
+    cy.get('[data-testid="new-booking-button"]').click();
+    cy.get('[data-testid="booking-form-modal"]').should("be.visible");
+    cy.get('[data-testid="booking-form-submit"]').click();
+
+    cy.get('[data-testid="booking-form-email-error"]', {
+      timeout: 5000,
+    }).should("exist");
+    cy.get('[data-testid="booking-form-modal"]').should("exist");
+    cy.get('[data-testid="booking-form-name"]').should("exist");
+    cy.get('[data-testid="booking-form-email"]').should("exist");
+    cy.get('[data-testid="booking-form-cancel"]').should("exist");
   });
 });

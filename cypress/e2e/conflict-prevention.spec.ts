@@ -17,8 +17,6 @@ describe("Conflict Prevention", () => {
       time: testData.create.time,
       duration: testData.create.duration,
     };
-
-    // Create first booking
     cy.get('[data-testid="new-booking-button"]').click();
     cy.get('[data-testid="booking-form-modal"]').should("be.visible");
     cy.get('[data-testid="booking-form-name"]').type(bookingData.name);
@@ -34,8 +32,6 @@ describe("Conflict Prevention", () => {
     );
     cy.get('[data-testid="booking-form-submit"]').click();
     cy.get('[data-testid="booking-list"]').should("be.visible");
-
-    // Try to create a conflicting booking
     cy.get('[data-testid="new-booking-button"]').click();
     cy.get('[data-testid="booking-form-modal"]').should("be.visible");
     cy.get('[data-testid="booking-form-name"]').type("Conflicting Booking");
@@ -46,8 +42,6 @@ describe("Conflict Prevention", () => {
       bookingData.duration,
     );
     cy.get('[data-testid="booking-form-submit"]').click();
-
-    // Should show conflict error
     cy.get('[data-testid="booking-form-time-error"]', {
       timeout: 5000,
     }).should("be.visible");

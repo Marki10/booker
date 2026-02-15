@@ -111,4 +111,24 @@ describe("Booking Lifecycle", () => {
     cy.get('[data-testid="view-mode-list"]').click();
     cy.get('[data-testid="booking-list"]').should("be.visible");
   });
+
+  it("should handle loading states during form submission", () => {
+    cy.get('[data-testid="new-booking-button"]').click();
+    cy.get('[data-testid="booking-form-modal"]').should("be.visible");
+    cy.get('[data-testid="booking-form-name"]').type("Loading Test");
+    cy.get('[data-testid="booking-form-email"]').type("loading@example.com");
+    const dateValue =
+      typeof testData.create.date === "function"
+        ? testData.create.date()
+        : testData.create.date;
+    cy.get('[data-testid="booking-form-date"]').type(dateValue);
+    cy.get('[data-testid="booking-form-time"]').select(testData.create.time);
+    cy.get('[data-testid="booking-form-duration"]').select(
+      testData.create.duration,
+    );
+    cy.get('[data-testid="booking-form-submit"]').click();
+    cy.get('[data-testid="booking-form-modal"]', { timeout: 3000 }).should(
+      "not.exist",
+    );
+  });
 });

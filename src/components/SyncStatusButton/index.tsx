@@ -9,10 +9,16 @@ export const SyncStatusButton = ({
   return (
     <div className="flex items-center gap-1.5 sm:gap-2">
       <button
+        type="button"
         onClick={onSync}
         disabled={isSyncing}
         className="relative flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 sm:px-3 sm:py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation cursor-pointer"
         title={
+          syncStatus.backendAvailable
+            ? "Sync with backend"
+            : "Backend not available"
+        }
+        aria-label={
           syncStatus.backendAvailable
             ? "Sync with backend"
             : "Backend not available"
