@@ -1,4 +1,8 @@
-import type { Booking, BookingFormData } from "../types/booking";
+import type {
+  Booking,
+  BookingFormData,
+  ApiError,
+} from "../types/interfaces";
 
 // Next.js makes NEXT_PUBLIC_* env vars available at build time
 const API_URL =
@@ -6,11 +10,6 @@ const API_URL =
     process.env.NEXT_PUBLIC_API_URL) ||
   "http://localhost:3000/api";
 const API_TIMEOUT = 5000; // 5 seconds
-
-interface ApiError {
-  error: string;
-  details?: unknown;
-}
 
 // Check if backend is available
 export const checkBackendAvailable = async (): Promise<boolean> => {

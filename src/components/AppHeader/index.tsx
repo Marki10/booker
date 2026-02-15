@@ -1,22 +1,8 @@
 import { Calendar } from "lucide-react";
+import type { AppHeaderProps } from "../../types/interfaces";
 import { SyncStatusButton } from "../SyncStatusButton";
 import { ViewModeToggle } from "../ViewModeToggle";
 import { NewBookingButton } from "../NewBookingButton";
-
-interface AppHeaderProps {
-  onTitleClick: () => void;
-  onSync: () => void;
-  isSyncing: boolean;
-  syncStatus: {
-    lastSync: string | null;
-    pendingSync: boolean;
-    backendAvailable: boolean;
-  };
-  viewMode: "list" | "calendar";
-  onViewModeChange: (mode: "list" | "calendar") => void;
-  showForm: boolean;
-  onNewBooking: () => void;
-}
 
 export const AppHeader = ({
   onTitleClick,

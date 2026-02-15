@@ -1,7 +1,4 @@
-interface ViewModeToggleProps {
-  viewMode: "list" | "calendar";
-  onViewModeChange: (mode: "list" | "calendar") => void;
-}
+import type { ViewModeToggleProps } from "../../types/interfaces";
 
 export const ViewModeToggle = ({
   viewMode,

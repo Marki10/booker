@@ -12,6 +12,8 @@ export const validateTime = (time: string): boolean => {
   return timeRegex.test(time);
 };
 
+import type { ValidationError } from "../types/interfaces";
+
 export const validateDate = (date: string): boolean => {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (!dateRegex.test(date)) return false;
@@ -19,11 +21,6 @@ export const validateDate = (date: string): boolean => {
   const d = new Date(date);
   return d instanceof Date && !isNaN(d.getTime());
 };
-
-export interface ValidationError {
-  field: string;
-  message: string;
-}
 
 export const validateBookingForm = (
   name: string,

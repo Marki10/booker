@@ -1,14 +1,5 @@
 import { Cloud, CloudOff, RefreshCw } from "lucide-react";
-
-interface SyncStatusButtonProps {
-  onSync: () => void;
-  isSyncing: boolean;
-  syncStatus: {
-    lastSync: string | null;
-    pendingSync: boolean;
-    backendAvailable: boolean;
-  };
-}
+import type { SyncStatusButtonProps } from "../../types/interfaces";
 
 export const SyncStatusButton = ({
   onSync,

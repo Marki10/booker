@@ -1,8 +1,5 @@
 import { Plus } from "lucide-react";
-
-interface NewBookingButtonProps {
-  onClick: () => void;
-}
+import type { NewBookingButtonProps } from "../../types/interfaces";
 
 export const NewBookingButton = ({ onClick }: NewBookingButtonProps) => {
   return (

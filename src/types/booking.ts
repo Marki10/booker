@@ -1,32 +1,7 @@
-export interface Booking {
-  id: string;
-  name: string;
-  email: string;
-  date: string;
-  time: string;
-  duration: number;
-  notes?: string;
-  status: "confirmed" | "pending" | "cancelled";
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface BookingFormData {
-  name: string;
-  email: string;
-  date: string;
-  time: string;
-  duration: number;
-  notes?: string;
-}
-
-export interface TimeSlot {
-  time: string;
-  available: boolean;
-}
-
-export interface DayAvailability {
-  date: string;
-  available: boolean;
-  slots: TimeSlot[];
-}
+// Re-export from interfaces.ts for backward compatibility
+export type {
+  Booking,
+  BookingFormData,
+  TimeSlot,
+  DayAvailability,
+} from "./interfaces";

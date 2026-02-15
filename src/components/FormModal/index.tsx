@@ -1,12 +1,6 @@
 import { X } from "lucide-react";
-import type { BookingFormData } from "../../types/booking";
+import type { FormModalProps } from "../../types/interfaces";
 import { BookingForm } from "../BookingForm";
-
-interface FormModalProps {
-  editingBooking: (Partial<BookingFormData> & { id?: string }) | null;
-  onSubmit: (formData: BookingFormData) => void | Promise<void>;
-  onCancel: () => void;
-}
 
 export const FormModal = ({
   editingBooking,

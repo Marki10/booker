@@ -1,13 +1,7 @@
-import type { Booking } from "../types/booking";
+import type { Booking, SyncMetadata } from "../types/interfaces";
 
 const STORAGE_KEY = "booker_bookings";
 const SYNC_META_KEY = "booker_sync_meta";
-
-export interface SyncMetadata {
-  lastSync: string | null;
-  lastSyncId: string | null;
-  pendingSync: boolean;
-}
 
 export const storageService = {
   // Get all bookings from localStorage

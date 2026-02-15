@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { FormEvent } from "react";
-import type { BookingFormData } from "../../types/booking";
+import type { BookingFormData, BookingFormProps } from "../../types/interfaces";
 import { bookingService } from "../../services/bookingService";
 import {
   getTimeSlots,
@@ -11,13 +11,6 @@ import {
 } from "../../utils/dateUtils";
 import { validateBookingForm } from "../../utils/validation";
 import { Calendar, Clock, User, Mail, FileText } from "lucide-react";
-
-interface BookingFormProps {
-  onSubmit: (booking: BookingFormData) => void | Promise<void>;
-  onCancel?: () => void;
-  initialData?: Partial<BookingFormData>;
-  excludeBookingId?: string;
-}
 
 export const BookingForm = ({
   onSubmit,

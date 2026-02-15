@@ -1,4 +1,4 @@
-import type { Booking, BookingFormData } from "../types/booking";
+import type { Booking, BookingFormData } from "../types/interfaces";
 import { storageService } from "./storageService";
 import { apiService, checkBackendAvailable } from "./apiService";
 

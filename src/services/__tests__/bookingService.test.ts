@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import type { Booking } from "../../types/booking";
+import type { Booking } from "../../types/interfaces";
 
 // In-memory fakes for storage and api
 const makeStorage = () => {

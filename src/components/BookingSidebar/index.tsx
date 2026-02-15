@@ -1,13 +1,5 @@
-import type { Booking } from "../../types/booking";
+import type { BookingSidebarProps } from "../../types/interfaces";
 import { BookingList } from "../BookingList";
-
-interface BookingSidebarProps {
-  bookings: Booking[];
-  selectedDate: string | null;
-  onClearDate: () => void;
-  onEdit: (booking: Booking) => void;
-  onDelete: (id: string) => void;
-}
 
 export const BookingSidebar = ({
   bookings,

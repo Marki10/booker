@@ -1,12 +1,6 @@
-import type { Booking } from "../../types/booking";
+import type { BookingListProps } from "../../types/interfaces";
 import { formatDate, formatTime } from "../../utils/dateUtils";
 import { Calendar, Clock, Mail, Trash2, Edit, FileText } from "lucide-react";
-
-interface BookingListProps {
-  bookings: Booking[];
-  onEdit?: (booking: Booking) => void;
-  onDelete?: (id: string) => void;
-}
 
 export const BookingList = ({
   bookings,

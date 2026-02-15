@@ -1,7 +1,4 @@
-interface DateFilterProps {
-  selectedDate: string;
-  onClear: () => void;
-}
+import type { DateFilterProps } from "../../types/interfaces";
 
 export const DateFilter = ({ selectedDate, onClear }: DateFilterProps) => {
   if (!selectedDate) return null;

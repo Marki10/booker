@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import type { Booking, BookingFormData } from "../types/booking";
+import type { Booking, BookingFormData } from "../types/interfaces";
 import { bookingService } from "../services/bookingService";
 
 export const useBookings = () => {

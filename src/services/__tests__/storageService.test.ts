@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { storageService } from "../storageService";
-import type { Booking } from "../../types/booking";
+import type { Booking } from "../../types/interfaces";
 
 describe("storageService", () => {
   const STORAGE_KEY = "booker_bookings";

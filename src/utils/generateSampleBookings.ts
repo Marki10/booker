@@ -1,4 +1,4 @@
-import type { BookingFormData } from '../types/booking'
+import type { BookingFormData } from '../types/interfaces'
 import { bookingService } from '../services/bookingService'
 
 const getFutureDate = (daysFromNow: number): string => {

@@ -1,10 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import type { Booking, BookingFormData } from "../types/booking";
+import type { Booking, BookingFormData, ViewMode } from "../types/interfaces";
 import { useBookings } from "../hooks/useBookings";
 import { generateSampleBookings } from "../utils/generateSampleBookings";
 import { storageService } from "../services/storageService";
-
-export type ViewMode = "list" | "calendar";
 
 export const useAppController = () => {
   const [showForm, setShowForm] = useState(false);

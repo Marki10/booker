@@ -1,15 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import type { Booking } from "../../types/booking";
+import type { BookingCalendarProps } from "../../types/interfaces";
 import { formatDate, getTodayDate } from "../../utils/dateUtils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
-interface BookingCalendarProps {
-  bookings: Booking[];
-  selectedDate?: string;
-  onDateSelect?: (date: string) => void;
-}
 
 export const BookingCalendar = ({
   bookings,

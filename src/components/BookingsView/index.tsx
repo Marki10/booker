@@ -1,18 +1,8 @@
-import type { Booking } from "../../types/booking";
+import type { BookingsViewProps } from "../../types/interfaces";
 import { BookingCalendar } from "../BookingCalendar";
 import { BookingList } from "../BookingList";
 import { BookingSidebar } from "../BookingSidebar";
 import { DateFilter } from "../DateFilter";
-
-interface BookingsViewProps {
-  viewMode: "list" | "calendar";
-  bookings: Booking[];
-  selectedDate: string;
-  onDateSelect: (date: string) => void;
-  onClearDate: () => void;
-  onEdit: (booking: Booking) => void;
-  onDelete: (id: string) => void;
-}
 
 export const BookingsView = ({
   viewMode,
