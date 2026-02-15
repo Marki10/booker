@@ -1,242 +1,65 @@
-# AWS Deployment Guide for Booker Backend
+# AWS Deployment Example
 
-This directory contains AWS deployment configurations for the Booker backend application.
+Client - CloudFront (CDN) - S3 (Next.js static frontend) - API Gateway - Lambda (Node.js API) - RDS PostgreSQL (private subnet)
 
-## Directory Structure
+This directory contains an example AWS CloudFormation template for deploying the Booking App.
 
-```
-aws/
-├── docker/              # Docker configurations
-│   ├── Dockerfile       # Multi-stage Docker build
-│   └── docker-compose.yml
-├── ecs/                 # ECS configurations
-│   └── task-definition.json
-├── cloudformation/      # CloudFormation templates
-│   └── backend-stack.yaml
-├── sam/                 # AWS SAM templates (Serverless)
-│   └── template.yaml
-└── scripts/             # Deployment scripts
-    ├── deploy.sh
-    └── setup-secrets.sh
-```
+## Architecture
 
-## Deployment Options
+- **CloudFront + S3** - Static frontend hosting
+- **API Gateway + Lambda** - Serverless API
+- **RDS PostgreSQL** - Database (in private subnet)
 
-### Option 1: ECS Fargate (Recommended for production)
+## Quick Setup
 
-1. **Prerequisites**
-   - AWS CLI configured
-   - Docker installed
-   - ECR repository created
-   - VPC and subnets configured
-   - DocumentDB or MongoDB Atlas cluster
+### Prerequisites
 
-2. **Setup Secrets**
+- AWS CLI installed and configured
+- AWS account with appropriate permissions
 
-   ```bash
-   cd scripts
-   chmod +x setup-secrets.sh
-   ./setup-secrets.sh us-east-1 "mongodb://..." "https://your-frontend.com"
-   ```
-
-3. **Deploy Infrastructure**
-
-   ```bash
-   aws cloudformation create-stack \
-     --stack-name booker-backend \
-     --template-body file://cloudformation/backend-stack.yaml \
-     --parameters \
-       ParameterKey=Environment,ParameterValue=production \
-       ParameterKey=VpcId,ParameterValue=vpc-xxxxx \
-       ParameterKey=SubnetIds,ParameterValue=subnet-xxxxx,subnet-yyyyy \
-       ParameterKey=DatabaseEndpoint,ParameterValue=cluster-endpoint.docdb.amazonaws.com \
-     --capabilities CAPABILITY_NAMED_IAM
-   ```
-
-4. **Build and Push Docker Image**
-   ```bash
-   cd scripts
-   chmod +x deploy.sh
-   ./deploy.sh production us-east-1
-   ```
-
-### Option 2: AWS SAM (Serverless)
-
-1. **Install SAM CLI**
-
-   ```bash
-   brew install aws-sam-cli  # macOS
-   # or
-   pip install aws-sam-cli
-   ```
-
-2. **Build and Deploy**
-
-   ```bash
-   cd sam
-   sam build
-   sam deploy --guided
-   ```
-
-3. **Update Lambda Functions**
-   - Each API endpoint is a separate Lambda function
-   - Functions are defined in `template.yaml`
-   - Deploy individual functions: `sam deploy --function-name GetBookingsFunction`
-
-### Option 3: Docker Compose (Local/Development)
-
-1. **Run with Docker Compose**
-
-   ```bash
-   cd docker
-   docker-compose up -d
-   ```
-
-2. **Access the API**
-   - Backend: http://localhost:3000
-   - MongoDB: localhost:27017
-
-## Environment Variables
-
-### Required
-
-- `MONGODB_URI` - MongoDB connection string
-- `FRONTEND_URL` - Frontend URL for CORS
-
-### Optional
-
-- `PORT` - Server port (default: 3000)
-- `NODE_ENV` - Environment (development/production)
-
-## Database Options
-
-### AWS DocumentDB
+### Deploy
 
 ```bash
-MONGODB_URI=mongodb://username:password@cluster-endpoint:27017/booker?tls=true&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false
+# Deploy CloudFormation stack
+aws cloudformation create-stack \
+  --stack-name booking-app-prod \
+  --template-body file://production-architecture.yaml \
+  --capabilities CAPABILITY_NAMED_IAM
+
+# Check status
+aws cloudformation describe-stacks --stack-name booking-app-prod
+
+# Get outputs (URLs, endpoints)
+aws cloudformation describe-stacks \
+  --stack-name booking-app-prod \
+  --query 'Stacks[0].Outputs'
 ```
 
-### MongoDB Atlas
+### Deploy Frontend
 
 ```bash
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/booker?retryWrites=true&w=majority
+# Build Next.js app
+npm run build
+
+# Sync to S3
+aws s3 sync out/ s3://booking-app-prod-frontend/ --delete
+
+# Invalidate CloudFront cache
+aws cloudfront create-invalidation \
+  --distribution-id <distribution-id> \
+  --paths "/*"
 ```
 
-### Local MongoDB
+### Configure Frontend
+
+Set the API URL in your frontend:
+
+```env
+NEXT_PUBLIC_API_URL=https://<api-gateway-url>/api
+```
+
+## Cleanup
 
 ```bash
-MONGODB_URI=mongodb://localhost:27017/booker
+aws cloudformation delete-stack --stack-name booking-app-prod
 ```
-
-## Security
-
-1. **Secrets Management**
-   - Use AWS Secrets Manager for sensitive data
-   - Never commit secrets to version control
-   - Rotate secrets regularly
-
-2. **Network Security**
-   - Use VPC for ECS services
-   - Configure security groups properly
-   - Use ALB with HTTPS (SSL certificate required)
-
-3. **IAM Roles**
-   - Use least privilege principle
-   - Separate execution and task roles
-   - Use role-based access control
-
-## Monitoring
-
-1. **CloudWatch Logs**
-   - Logs are automatically sent to CloudWatch
-   - Log group: `/ecs/booker-backend`
-
-2. **CloudWatch Metrics**
-   - ECS service metrics
-   - ALB metrics
-   - Application metrics
-
-3. **Health Checks**
-   - Health endpoint: `/health`
-   - Configured in ECS task definition
-   - ALB health checks
-
-## Scaling
-
-1. **Auto Scaling**
-   - Configure ECS service auto scaling
-   - Set min/max capacity
-   - Configure scaling policies
-
-2. **Load Balancing**
-   - Use Application Load Balancer
-   - Configure target groups
-   - Set up health checks
-
-## Cost Optimization
-
-1. **Use Fargate Spot** for non-production environments
-2. **Right-size** your containers (CPU/memory)
-3. **Use Reserved Capacity** for production
-4. **Enable CloudWatch Logs retention** policies
-5. **Use S3** for storing Docker images (if not using ECR)
-
-## Troubleshooting
-
-1. **Check ECS Service Events**
-
-   ```bash
-   aws ecs describe-services \
-     --cluster booker-backend-production \
-     --services booker-backend-service-production
-   ```
-
-2. **Check CloudWatch Logs**
-
-   ```bash
-   aws logs tail /ecs/booker-backend --follow
-   ```
-
-3. **Check Task Status**
-
-   ```bash
-   aws ecs list-tasks --cluster booker-backend-production
-   ```
-
-4. **Test Health Endpoint**
-   ```bash
-   curl https://your-alb-dns-name.region.elb.amazonaws.com/health
-   ```
-
-## CI/CD Integration
-
-### GitHub Actions Example
-
-```yaml
-name: Deploy to AWS
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Deploy
-        run: ./aws/scripts/deploy.sh production us-east-1
-```
-
-## Additional Resources
-
-- [AWS ECS Documentation](https://docs.aws.amazon.com/ecs/)
-- [AWS CloudFormation Documentation](https://docs.aws.amazon.com/cloudformation/)
-- [AWS SAM Documentation](https://docs.aws.amazon.com/serverless-application-model/)
-- [Docker Documentation](https://docs.docker.com/)

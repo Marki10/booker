@@ -1,3 +1,4 @@
+import axios, { AxiosInstance } from "axios";
 import type {
   Booking,
   BookingFormData,
@@ -11,22 +12,45 @@ const API_URL =
   "http://localhost:3000/api";
 const API_TIMEOUT = 5000; // 5 seconds
 
+// Create axios instance with default config
+const axiosInstance: AxiosInstance = axios.create({
+  baseURL: API_URL,
+  timeout: API_TIMEOUT,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Helper function to handle axios errors
+const handleAxiosError = (error: unknown): never => {
+  if (axios.isAxiosError(error)) {
+    if (error.code === "ECONNABORTED" || error.message.includes("timeout")) {
+      throw new Error("Request timeout: Backend is not responding");
+    }
+    if (error.response) {
+      // Server responded with error status
+      const apiError: ApiError = error.response.data || {
+        error: error.response.statusText || "Request failed",
+      };
+      throw new Error(apiError.error || `Request failed: ${error.response.statusText}`);
+    }
+    if (error.request) {
+      // Request was made but no response received
+      throw new Error("No response from server. Please check your connection.");
+    }
+  }
+  // Unknown error
+  throw error instanceof Error ? error : new Error("An unknown error occurred");
+};
+
 // Check if backend is available
 export const checkBackendAvailable = async (): Promise<boolean> => {
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
-
-    const response = await fetch(`${API_URL.replace("/api", "")}/health`, {
-      method: "GET",
-      signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const healthUrl = API_URL.replace("/api", "") + "/health";
+    await axiosInstance.get(healthUrl, {
+      timeout: API_TIMEOUT,
     });
-
-    clearTimeout(timeoutId);
-    return response.ok;
+    return true;
   } catch {
     return false;
   }
@@ -37,91 +61,30 @@ export const apiService = {
   // Get all bookings from backend
   async getAllBookings(): Promise<Booking[]> {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
-
-      const response = await fetch(`${API_URL}/bookings`, {
-        method: "GET",
-        signal: controller.signal,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch bookings: ${response.statusText}`);
-      }
-
-      return await response.json();
+      const response = await axiosInstance.get<Booking[]>("/bookings");
+      return response.data;
     } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") {
-        throw new Error("Request timeout: Backend is not responding");
-      }
-      throw error;
+      return handleAxiosError(error);
     }
   },
 
   // Get booking by ID
   async getBookingById(id: string): Promise<Booking> {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
-
-      const response = await fetch(`${API_URL}/bookings/${id}`, {
-        method: "GET",
-        signal: controller.signal,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch booking: ${response.statusText}`);
-      }
-
-      return await response.json();
+      const response = await axiosInstance.get<Booking>(`/bookings/${id}`);
+      return response.data;
     } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") {
-        throw new Error("Request timeout: Backend is not responding");
-      }
-      throw error;
+      return handleAxiosError(error);
     }
   },
 
   // Create booking on backend
   async createBooking(data: BookingFormData): Promise<Booking> {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
-
-      const response = await fetch(`${API_URL}/bookings`, {
-        method: "POST",
-        signal: controller.signal,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        const error: ApiError = await response.json().catch(() => ({
-          error: response.statusText,
-        }));
-        throw new Error(error.error || "Failed to create booking");
-      }
-
-      return await response.json();
+      const response = await axiosInstance.post<Booking>("/bookings", data);
+      return response.data;
     } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") {
-        throw new Error("Request timeout: Backend is not responding");
-      }
-      throw error;
+      return handleAxiosError(error);
     }
   },
 
@@ -131,60 +94,19 @@ export const apiService = {
     data: Partial<BookingFormData>,
   ): Promise<Booking> {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
-
-      const response = await fetch(`${API_URL}/bookings/${id}`, {
-        method: "PUT",
-        signal: controller.signal,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        const error: ApiError = await response.json().catch(() => ({
-          error: response.statusText,
-        }));
-        throw new Error(error.error || "Failed to update booking");
-      }
-
-      return await response.json();
+      const response = await axiosInstance.put<Booking>(`/bookings/${id}`, data);
+      return response.data;
     } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") {
-        throw new Error("Request timeout: Backend is not responding");
-      }
-      throw error;
+      return handleAxiosError(error);
     }
   },
 
   // Delete booking on backend
   async deleteBooking(id: string): Promise<void> {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
-
-      const response = await fetch(`${API_URL}/bookings/${id}`, {
-        method: "DELETE",
-        signal: controller.signal,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`Failed to delete booking: ${response.statusText}`);
-      }
+      await axiosInstance.delete(`/bookings/${id}`);
     } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") {
-        throw new Error("Request timeout: Backend is not responding");
-      }
-      throw error;
+      handleAxiosError(error);
     }
   },
 
@@ -196,36 +118,18 @@ export const apiService = {
     excludeBookingId?: string,
   ): Promise<boolean> {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
-
-      const response = await fetch(`${API_URL}/bookings/availability`, {
-        method: "POST",
-        signal: controller.signal,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const response = await axiosInstance.post<{ available: boolean }>(
+        "/bookings/availability",
+        {
           date,
           time,
           duration,
           excludeBookingId,
-        }),
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`Failed to check availability: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data.available;
+        },
+      );
+      return response.data.available;
     } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") {
-        throw new Error("Request timeout: Backend is not responding");
-      }
-      throw error;
+      return handleAxiosError(error);
     }
   },
 };

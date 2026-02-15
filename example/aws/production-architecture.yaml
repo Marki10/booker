@@ -1,0 +1,151 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Production-ready AWS architecture for Booking Application.
+  Demonstrates scalable, secure, serverless + relational setup.
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: prod
+
+Resources:
+
+  # -------------------------
+  # S3 - Static Frontend
+  # -------------------------
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub booking-app-${EnvironmentName}-frontend
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+
+  # -------------------------
+  # CloudFront CDN
+  # -------------------------
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+        Origins:
+          - Id: FrontendOrigin
+            DomainName: !GetAtt FrontendBucket.RegionalDomainName
+            S3OriginConfig: {}
+        DefaultCacheBehavior:
+          TargetOriginId: FrontendOrigin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+
+  # -------------------------
+  # VPC
+  # -------------------------
+  AppVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref AppVPC
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref AppVPC
+      CidrBlock: 10.0.2.0/24
+
+  # -------------------------
+  # Security Groups
+  # -------------------------
+  DatabaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow DB access from Lambda only
+      VpcId: !Ref AppVPC
+
+  # -------------------------
+  # RDS PostgreSQL
+  # -------------------------
+  BookingDatabase:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      Engine: postgres
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: 20
+      MasterUsername: masteruser
+      MasterUserPassword: SuperSecurePassword123
+      VPCSecurityGroups:
+        - !Ref DatabaseSecurityGroup
+      PubliclyAccessible: false
+      MultiAZ: false
+
+  # -------------------------
+  # Lambda API
+  # -------------------------
+  BookingApiFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub booking-api-${EnvironmentName}
+      Runtime: nodejs20.x
+      Handler: index.handler
+      Role: arn:aws:iam::123456789012:role/lambda-basic-role
+      Code:
+        ZipFile: |
+          exports.handler = async () => {
+            return {
+              statusCode: 200,
+              body: JSON.stringify({ message: "Booking API running" }),
+            };
+          };
+
+  # -------------------------
+  # API Gateway
+  # -------------------------
+  BookingApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: booking-api
+
+  ApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt BookingApi.RootResourceId
+      PathPart: bookings
+      RestApiId: !Ref BookingApi
+
+  ApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref BookingApi
+      ResourceId: !Ref ApiResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub >
+          arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${BookingApiFunction.Arn}/invocations
+
+Outputs:
+  CloudFrontURL:
+    Description: URL of the frontend
+    Value: !Sub https://${CloudFrontDistribution.DomainName}
+
+  ApiURL:
+    Description: API Gateway endpoint
+    Value: !Sub https://${BookingApi}.execute-api.${AWS::Region}.amazonaws.com/prod
