@@ -76,7 +76,7 @@ Cypress.Commands.add("editBooking", (originalTitle, updates) => {
   }
   if (updates.date) {
     const dateValue =
-      typeof updates.date === "function" ? updates.date : updates.date;
+      typeof updates.date === "function" ? updates.date() : updates.date;
     cy.get('[data-testid="booking-form-date"]').clear().type(dateValue);
   }
   if (updates.time) {
