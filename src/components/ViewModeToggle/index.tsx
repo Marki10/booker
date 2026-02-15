@@ -17,6 +17,9 @@ export const ViewModeToggle = ({
             : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
         }`}
         data-testid="view-mode-list"
+        aria-label="Switch to list view"
+        aria-pressed={viewMode === "list"}
+        type="button"
       >
         List
       </button>
@@ -28,6 +31,9 @@ export const ViewModeToggle = ({
             : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
         }`}
         data-testid="view-mode-calendar"
+        aria-label="Switch to calendar view"
+        aria-pressed={viewMode === "calendar"}
+        type="button"
       >
         Calendar
       </button>

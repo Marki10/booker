@@ -21,6 +21,8 @@ export const AppHeader = ({
           <button
             onClick={onTitleClick}
             className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity cursor-pointer group self-start"
+            aria-label="Go to home page"
+            type="button"
           >
             <div className="p-1.5 sm:p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow">
               <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
