@@ -6,6 +6,7 @@ import type { BookingFormData, BookingFormProps } from "../../types/interfaces";
 import { bookingService } from "../../services/bookingService";
 import { getTodayDate, isPastDateTime } from "../../utils/dateUtils";
 import { validateBookingForm } from "../../utils/validation";
+import { ERROR_MESSAGES } from "../../constants/validation";
 import { timeSlots, durationOptions } from "../../data/bookingFormData";
 import { Calendar, Clock, User, Mail, FileText } from "lucide-react";
 import { FormField } from "./FormField";
@@ -64,15 +65,14 @@ export const BookingForm = ({
 
     if (!isAvailable) {
       setErrors({
-        time: "This time slot is already booked. Please choose another time.",
+        time: ERROR_MESSAGES.TIME_SLOT_BOOKED,
       });
       return;
     }
 
-    // Check if date/time is in the past
     if (isPastDateTime(formData.date, formData.time)) {
       setErrors({
-        date: "Cannot book appointments in the past.",
+        date: ERROR_MESSAGES.PAST_DATE_TIME,
       });
       return;
     }

@@ -4,12 +4,19 @@ import type { ViewMode } from "../types/booking";
 import { useBookings } from "../hooks/useBookings";
 import { generateSampleBookings } from "../utils/generateSampleBookings";
 import { storageService } from "../services/storageService";
+import { useConfirmDialog } from "../hooks/useConfirmDialog";
+import { useToast } from "../hooks/useToast";
+import { ERROR_MESSAGES } from "../constants/validation";
 
 export const useAppController = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [viewMode, setViewMode] = useState<ViewMode>("list");
+
+  const { showSuccess, showError, toasts, removeToast } = useToast();
+  const { dialogState, showConfirm, closeDialog, handleConfirm } =
+    useConfirmDialog();
 
   const {
     bookings,
@@ -24,22 +31,32 @@ export const useAppController = () => {
 
   const handleCreateBooking = useCallback(
     async (formData: BookingFormData) => {
-      await createBooking(formData);
-      setShowForm(false);
-      setEditingBooking(null);
+      try {
+        await createBooking(formData);
+        setShowForm(false);
+        setEditingBooking(null);
+        showSuccess(ERROR_MESSAGES.BOOKING_CREATED);
+      } catch {
+        showError(ERROR_MESSAGES.UNKNOWN_ERROR);
+      }
     },
-    [createBooking],
+    [createBooking, showSuccess, showError],
   );
 
   const handleUpdateBooking = useCallback(
     async (formData: BookingFormData) => {
       if (editingBooking) {
-        await updateBooking(editingBooking.id, formData);
-        setShowForm(false);
-        setEditingBooking(null);
+        try {
+          await updateBooking(editingBooking.id, formData);
+          setShowForm(false);
+          setEditingBooking(null);
+          showSuccess(ERROR_MESSAGES.BOOKING_UPDATED);
+        } catch {
+          showError(ERROR_MESSAGES.UNKNOWN_ERROR);
+        }
       }
     },
-    [editingBooking, updateBooking],
+    [editingBooking, updateBooking, showSuccess, showError],
   );
 
   const handleFormSubmit = useCallback(
@@ -64,10 +81,24 @@ export const useAppController = () => {
   }, []);
 
   const handleDeleteBooking = useCallback(
-    async (id: string) => {
-      await deleteBooking(id);
+    (booking: Booking) => {
+      showConfirm(
+        ERROR_MESSAGES.DELETE_CONFIRMATION,
+        async () => {
+          try {
+            await deleteBooking(booking.id);
+            showSuccess(ERROR_MESSAGES.BOOKING_DELETED);
+          } catch {
+            showError(ERROR_MESSAGES.UNKNOWN_ERROR);
+          }
+        },
+        {
+          title: "Delete Booking",
+          variant: "danger",
+        },
+      );
     },
-    [deleteBooking],
+    [deleteBooking, showConfirm, showSuccess, showError],
   );
 
   const handleTitleClick = useCallback(() => {
@@ -88,6 +119,9 @@ export const useAppController = () => {
   // Generate sample bookings on first load if no bookings exist
   const hasCheckedForSamples = useRef(false);
   useEffect(() => {
+    // Keep e2e runs deterministic by skipping automatic sample seeding in Cypress.
+    if (typeof window !== "undefined" && "Cypress" in window) return;
+
     // Only check once on mount, not on every render
     if (hasCheckedForSamples.current) return;
     hasCheckedForSamples.current = true;
@@ -102,6 +136,17 @@ export const useAppController = () => {
     }
   }, [loadBookings]);
 
+  const handleSyncWithBackend = useCallback(async () => {
+    try {
+      const result = await syncWithBackend();
+      if (result?.success) {
+        showSuccess(ERROR_MESSAGES.SYNC_SUCCESS);
+      }
+    } catch {
+      showError(ERROR_MESSAGES.SYNC_FAILED);
+    }
+  }, [syncWithBackend, showSuccess, showError]);
+
   return {
     showForm,
     editingBooking,
@@ -112,7 +157,7 @@ export const useAppController = () => {
     bookings,
     isSyncing,
     syncStatus,
-    syncWithBackend,
+    syncWithBackend: handleSyncWithBackend,
     handleFormSubmit,
     handleCancelForm,
     handleEditBooking,
@@ -120,5 +165,10 @@ export const useAppController = () => {
     handleTitleClick,
     handleNewBooking,
     handleClearDate,
+    dialogState,
+    closeDialog,
+    handleConfirm,
+    toasts,
+    removeToast,
   };
 };

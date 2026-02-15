@@ -113,7 +113,7 @@ export interface BookingsViewProps {
   onDateSelect: (date: string) => void;
   onClearDate: () => void;
   onEdit: (booking: Booking) => void;
-  onDelete: (id: string) => void;
+  onDelete: (booking: Booking) => void;
 }
 
 export interface BookingSidebarProps {
@@ -121,13 +121,13 @@ export interface BookingSidebarProps {
   selectedDate: string | null;
   onClearDate: () => void;
   onEdit: (booking: Booking) => void;
-  onDelete: (id: string) => void;
+  onDelete: (booking: Booking) => void;
 }
 
 export interface BookingListProps {
   bookings: Booking[];
   onEdit?: (booking: Booking) => void;
-  onDelete?: (id: string) => void;
+  onDelete?: (booking: Booking) => void;
 }
 
 export interface AppHeaderProps {
@@ -204,4 +204,26 @@ export interface FormButtonsProps {
   cancelLabel?: string;
   isSubmitting?: boolean;
   onCancel?: () => void;
+}
+
+export interface ConfirmDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title?: string;
+  message: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  variant?: "danger" | "warning" | "info";
+}
+
+export interface Toast {
+  id: string;
+  message: string;
+  type: "success" | "error" | "warning" | "info";
+  duration?: number;
+}
+
+export interface ToastProps extends Toast {
+  onClose: (id: string) => void;
 }

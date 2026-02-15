@@ -7,6 +7,8 @@ import { BookingsView } from "../src/components/BookingsView";
 import { Footer } from "../src/components/Footer";
 import { ErrorBoundary } from "../src/components/ErrorBoundary";
 import { LoadingSpinner } from "../src/components/LoadingSpinner";
+import { ToastContainer } from "../src/components/ToastContainer";
+import { ConfirmDialog } from "../src/components/ConfirmDialog";
 
 import { useAppController } from "../src/controllers/useAppController";
 
@@ -29,6 +31,11 @@ export default function Home() {
     handleTitleClick,
     handleNewBooking,
     handleClearDate,
+    dialogState,
+    closeDialog,
+    handleConfirm,
+    toasts,
+    removeToast,
   } = useAppController();
 
   return (
@@ -69,6 +76,15 @@ export default function Home() {
 
         <Footer />
       </div>
+      <ConfirmDialog
+        isOpen={dialogState.isOpen}
+        onClose={closeDialog}
+        onConfirm={handleConfirm}
+        title={dialogState.title}
+        message={dialogState.message}
+        variant={dialogState.variant}
+      />
+      <ToastContainer toasts={toasts} onClose={removeToast} />
     </ErrorBoundary>
   );
 }

@@ -118,7 +118,7 @@ export const BookingList = memo(({
               {onDelete && (
                 <button
                   type="button"
-                  onClick={() => onDelete(booking.id)}
+                  onClick={() => onDelete(booking)}
                   aria-label={`Delete booking for ${booking.name}`}
                   className="flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 min-h-[44px] touch-manipulation cursor-pointer"
                   data-testid="delete-booking-button"

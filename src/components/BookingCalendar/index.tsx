@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, memo } from "react";
+import { useState, memo, useMemo, useCallback } from "react";
 import type { Booking } from "../../types/interfaces";
 import type { BookingCalendarProps } from "../../types/interfaces";
 import { formatDate, getTodayDate } from "../../utils/dateUtils";
@@ -25,9 +25,21 @@ export const BookingCalendar = memo(({
   const daysInMonth = lastDayOfMonth.getDate();
   const startingDayOfWeek = firstDayOfMonth.getDay();
 
-  const getBookingsForDate = (date: string): Booking[] => {
-    return bookings.filter((booking) => booking.date === date);
-  };
+  const bookingsByDate = useMemo(() => {
+    const map = new Map<string, Booking[]>();
+    bookings.forEach((booking) => {
+      const existing = map.get(booking.date) || [];
+      map.set(booking.date, [...existing, booking]);
+    });
+    return map;
+  }, [bookings]);
+
+  const getBookingsForDate = useCallback(
+    (date: string): Booking[] => {
+      return bookingsByDate.get(date) || [];
+    },
+    [bookingsByDate],
+  );
 
   const formatDateString = (day: number): string => {
     const date = new Date(year, month, day);

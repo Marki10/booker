@@ -59,10 +59,8 @@ export const useBookings = () => {
 
   const deleteBooking = useCallback(
     async (id: string) => {
-      if (confirm("Are you sure you want to delete this booking?")) {
-        await bookingService.deleteBooking(id);
-        loadBookings();
-      }
+      await bookingService.deleteBooking(id);
+      loadBookings();
     },
     [loadBookings],
   );

@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import type { BookingsViewProps } from "../../types/interfaces";
 import { BookingCalendar } from "../BookingCalendar";
 import { BookingList } from "../BookingList";
@@ -14,9 +14,11 @@ export const BookingsView = memo(({
   onEdit,
   onDelete,
 }: BookingsViewProps) => {
-  const filteredBookings = selectedDate
-    ? bookings.filter((booking) => booking.date === selectedDate)
-    : bookings;
+  const filteredBookings = useMemo(() => {
+    return selectedDate
+      ? bookings.filter((booking) => booking.date === selectedDate)
+      : bookings;
+  }, [bookings, selectedDate]);
 
   if (viewMode === "calendar") {
     return (
