@@ -26,7 +26,8 @@ export const useBookings = () => {
     updateSyncStatus();
   }, [updateSyncStatus]);
 
-  const syncWithBackend = useCallback(async () => {
+  const syncWithBackend = useCallback(
+    async (): Promise<{ success: boolean; error?: string }> => {
     setIsSyncing(true);
     try {
       const result = await bookingService.syncWithBackend();
@@ -34,12 +35,20 @@ export const useBookings = () => {
         loadBookings();
       }
       updateSyncStatus();
+      return result;
     } catch (error) {
       console.error("Sync error:", error);
+      updateSyncStatus();
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown sync error",
+      };
     } finally {
       setIsSyncing(false);
     }
-  }, [loadBookings, updateSyncStatus]);
+    },
+    [loadBookings, updateSyncStatus],
+  );
 
   const createBooking = useCallback(
     async (formData: BookingFormData) => {
