@@ -4,18 +4,23 @@ describe("Data Persistence", () => {
   beforeEach(() => {
     cy.resetApp();
     cy.visit("/", { failOnStatusCode: false });
-    cy.get('[data-testid="booking-list"], [data-testid="booking-calendar"]', {
+    cy.get(
+      '[data-testid="booking-list"], [data-testid="booking-calendar"], [data-testid="empty-booking-list"]',
+      {
       timeout: 10000,
-    }).should("exist");
+      },
+    ).should("exist");
   });
 
   it("should cancel form creation without saving", () => {
     cy.get('[data-testid="view-mode-list"]').click();
     cy.wait(500);
     cy.get("body").then(($body) => {
-      if ($body.find('[data-testid="booking-item"]').length > 0) {
-        cy.get('[data-testid="booking-item"]').each(() => {
+      const existingBookings = $body.find('[data-testid="booking-item"]').length;
+      if (existingBookings > 0) {
+        Cypress._.times(existingBookings, () => {
           cy.get('[data-testid="delete-booking-button"]').first().click();
+          cy.contains("button", "Confirm").click();
         });
       }
     });

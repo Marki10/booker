@@ -30,6 +30,7 @@ declare global {
 
 // Clear app storage before tests
 Cypress.Commands.add("resetApp", () => {
+  cy.visit("/", { failOnStatusCode: false });
   cy.window({ log: false }).then((win) => {
     win.localStorage.removeItem("booker_bookings");
     win.localStorage.removeItem("booker_sync_meta");
@@ -40,6 +41,7 @@ Cypress.Commands.add("resetApp", () => {
       JSON.stringify({ lastSync: null, pendingSync: false }),
     );
   });
+  cy.reload();
 });
 
 // Create a booking via UI

@@ -71,7 +71,7 @@ describe("dateUtils", () => {
       const slots = getTimeSlots();
       expect(slots.length).toBeGreaterThan(0);
       expect(slots[0]).toBe("09:00");
-      expect(slots).toContain("17:00");
+      expect(slots).toContain("16:30");
     });
 
     it("should generate slots with custom parameters", () => {

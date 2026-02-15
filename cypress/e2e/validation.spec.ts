@@ -4,9 +4,12 @@ describe("Form Validation", () => {
   beforeEach(() => {
     cy.resetApp();
     cy.visit("/", { failOnStatusCode: false });
-    cy.get('[data-testid="booking-list"], [data-testid="booking-calendar"]', {
+    cy.get(
+      '[data-testid="booking-list"], [data-testid="booking-calendar"], [data-testid="empty-booking-list"]',
+      {
       timeout: 10000,
-    }).should("exist");
+      },
+    ).should("exist");
   });
 
   it("should show validation errors for empty required fields", () => {

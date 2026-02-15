@@ -4,9 +4,12 @@ describe("Error Handling", () => {
   beforeEach(() => {
     cy.resetApp();
     cy.visit("/", { failOnStatusCode: false });
-    cy.get('[data-testid="booking-list"], [data-testid="booking-calendar"]', {
+    cy.get(
+      '[data-testid="booking-list"], [data-testid="booking-calendar"], [data-testid="empty-booking-list"]',
+      {
       timeout: 10000,
-    }).should("exist");
+      },
+    ).should("exist");
   });
 
   it("should handle sync failure without crashing the UI", () => {
@@ -20,9 +23,9 @@ describe("Error Handling", () => {
     cy.get('[data-testid="sync-button"]').click();
     cy.wait(["@health", "@bookings"]);
     cy.get('[data-testid="sync-status"]').should("not.exist");
-    cy.get('[data-testid="booking-list"], [data-testid="booking-calendar"]').should(
-      "exist",
-    );
+    cy.get(
+      '[data-testid="booking-list"], [data-testid="booking-calendar"], [data-testid="empty-booking-list"]',
+    ).should("exist");
   });
 
   it("should keep local booking when backend create fails", () => {
@@ -55,9 +58,9 @@ describe("Error Handling", () => {
     }).as("healthError");
 
     cy.get('[data-testid="sync-button"]').click();
-    cy.get('[data-testid="booking-list"], [data-testid="booking-calendar"]').should(
-      "exist",
-    );
+    cy.get(
+      '[data-testid="booking-list"], [data-testid="booking-calendar"], [data-testid="empty-booking-list"]',
+    ).should("exist");
     cy.get('[data-testid="new-booking-button"]').should("be.visible");
   });
 

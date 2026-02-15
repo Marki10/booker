@@ -5,5 +5,12 @@
     "isolatedModules": false,
     "noEmit": true
   },
-  "include": ["e2e/**/*.cy.ts", "support/**/*.ts"]
+  "include": [
+    "e2e/**/*.cy.ts",
+    "e2e/**/*.spec.ts",
+    "e2e/**/*.cy.tsx",
+    "e2e/**/*.spec.tsx",
+    "support/**/*.ts"
+  ],
+  "exclude": []
 }

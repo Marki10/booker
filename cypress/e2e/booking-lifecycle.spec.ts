@@ -28,9 +28,12 @@ describe("Booking Lifecycle", () => {
   beforeEach(() => {
     cy.resetApp();
     cy.visit("/", { failOnStatusCode: false });
-    cy.get('[data-testid="booking-list"], [data-testid="booking-calendar"]', {
+    cy.get(
+      '[data-testid="booking-list"], [data-testid="booking-calendar"], [data-testid="empty-booking-list"]',
+      {
       timeout: 10000,
-    }).should("exist");
+      },
+    ).should("exist");
   });
 
   it("should create a new booking successfully", () => {
@@ -92,6 +95,7 @@ describe("Booking Lifecycle", () => {
       .within(() => {
         cy.get('[data-testid="delete-booking-button"]').click();
       });
+    cy.contains("button", "Confirm").click();
     cy.contains('[data-testid="booking-item"]', testData.toDelete.name, {
       timeout: 5000,
     }).should("not.exist");
