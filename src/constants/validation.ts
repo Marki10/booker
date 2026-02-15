@@ -18,6 +18,7 @@ export const ERROR_MESSAGES = {
   BOOKING_CREATED: "Booking created successfully!",
   BOOKING_UPDATED: "Booking updated successfully!",
   BOOKING_DELETED: "Booking deleted successfully!",
+  BOOKING_DELETE_FAILED: "Failed to delete booking. Please try again.",
   NETWORK_ERROR: "Network error. Please check your connection.",
   UNKNOWN_ERROR: "An unexpected error occurred. Please try again.",
 } as const;

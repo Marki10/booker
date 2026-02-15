@@ -68,8 +68,9 @@ export const useBookings = () => {
 
   const deleteBooking = useCallback(
     async (id: string) => {
-      await bookingService.deleteBooking(id);
+      const wasDeleted = await bookingService.deleteBooking(id);
       loadBookings();
+      return wasDeleted;
     },
     [loadBookings],
   );

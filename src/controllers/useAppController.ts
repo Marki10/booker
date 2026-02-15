@@ -86,10 +86,14 @@ export const useAppController = () => {
         ERROR_MESSAGES.DELETE_CONFIRMATION,
         async () => {
           try {
-            await deleteBooking(booking.id);
-            showSuccess(ERROR_MESSAGES.BOOKING_DELETED);
+            const wasDeleted = await deleteBooking(booking.id);
+            if (wasDeleted) {
+              showSuccess(ERROR_MESSAGES.BOOKING_DELETED);
+            } else {
+              showError(ERROR_MESSAGES.BOOKING_DELETE_FAILED);
+            }
           } catch {
-            showError(ERROR_MESSAGES.UNKNOWN_ERROR);
+            showError(ERROR_MESSAGES.BOOKING_DELETE_FAILED);
           }
         },
         {
