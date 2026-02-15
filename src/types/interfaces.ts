@@ -60,12 +60,6 @@ export interface ValidationError {
 }
 
 // ============================================================================
-// Controller and View types
-// ============================================================================
-
-export type ViewMode = "list" | "calendar";
-
-// ============================================================================
 // Component Props interfaces
 // ============================================================================
 
@@ -149,4 +143,65 @@ export interface AppHeaderProps {
   onViewModeChange: (mode: "list" | "calendar") => void;
   showForm: boolean;
   onNewBooking: () => void;
+}
+
+// ============================================================================
+// Form Component Props interfaces
+// ============================================================================
+
+export interface FormFieldProps {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  iconBgColor: string;
+  error?: string;
+  required?: boolean;
+  children: React.ReactNode;
+  testId?: string;
+  errorTestId?: string;
+}
+
+export interface TextInputProps {
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  error?: string;
+  required?: boolean;
+  autoComplete?: string;
+  inputMode?: "text" | "email" | "tel" | "url";
+  testId?: string;
+  min?: string;
+  type?: "text" | "email" | "date";
+}
+
+export interface SelectOption {
+  value: string | number;
+  label: string;
+}
+
+export interface SelectInputProps {
+  id: string;
+  value: string | number;
+  onChange: (value: string | number) => void;
+  options: SelectOption[];
+  error?: string;
+  required?: boolean;
+  testId?: string;
+}
+
+export interface TextareaInputProps {
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  rows?: number;
+  testId?: string;
+}
+
+export interface FormButtonsProps {
+  submitLabel?: string;
+  cancelLabel?: string;
+  isSubmitting?: boolean;
+  onCancel?: () => void;
 }

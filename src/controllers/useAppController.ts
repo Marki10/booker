@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import type { Booking, BookingFormData, ViewMode } from "../types/interfaces";
+import type { Booking, BookingFormData } from "../types/interfaces";
+import type { ViewMode } from "../types/booking";
 import { useBookings } from "../hooks/useBookings";
 import { generateSampleBookings } from "../utils/generateSampleBookings";
 import { storageService } from "../services/storageService";

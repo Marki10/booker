@@ -5,3 +5,5 @@ export type {
   TimeSlot,
   DayAvailability,
 } from "./interfaces";
+
+export type ViewMode = "list" | "calendar";

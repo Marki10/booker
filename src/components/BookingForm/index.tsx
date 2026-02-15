@@ -4,13 +4,15 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import type { BookingFormData, BookingFormProps } from "../../types/interfaces";
 import { bookingService } from "../../services/bookingService";
-import {
-  getTimeSlots,
-  getTodayDate,
-  isPastDateTime,
-} from "../../utils/dateUtils";
+import { getTodayDate, isPastDateTime } from "../../utils/dateUtils";
 import { validateBookingForm } from "../../utils/validation";
+import { timeSlots, durationOptions } from "../../data/bookingFormData";
 import { Calendar, Clock, User, Mail, FileText } from "lucide-react";
+import { FormField } from "./FormField";
+import { TextInput } from "./TextInput";
+import { SelectInput } from "./SelectInput";
+import { TextareaInput } from "./TextareaInput";
+import { FormButtons } from "./FormButtons";
 
 export const BookingForm = ({
   onSubmit,
@@ -28,9 +30,6 @@ export const BookingForm = ({
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const timeSlots = getTimeSlots(9, 17, 30);
-  const durationOptions = [15, 30, 60, 90, 120, 180, 240];
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -96,225 +95,141 @@ export const BookingForm = ({
     }
   };
 
+  const timeSlotOptions = timeSlots.map((slot) => ({
+    value: slot,
+    label: slot,
+  }));
+
+  const durationSelectOptions = durationOptions.map((duration) => ({
+    value: duration,
+    label: `${duration} minutes`,
+  }));
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6" noValidate>
-      <div>
-        <label
-          htmlFor="name"
-          className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 sm:mb-3"
-        >
-          <div className="p-1.5 bg-blue-100 rounded-lg">
-            <User className="w-4 h-4 text-blue-600" />
-          </div>
-          Name
-        </label>
-        <input
-          type="text"
+      <FormField
+        id="name"
+        label="Name"
+        icon={<User className="w-4 h-4 text-blue-600" />}
+        iconBgColor="bg-blue-100"
+        error={errors.name}
+        required
+        testId="booking-form-name"
+      >
+        <TextInput
           id="name"
           value={formData.name}
-          onChange={(e) => handleChange("name", e.target.value)}
-          className={`w-full px-4 py-3.5 sm:py-3 text-base border-2 rounded-xl focus:ring-2 focus:ring-offset-1 sm:focus:ring-offset-2 transition-all duration-200 touch-manipulation ${
-            errors.name
-              ? "border-red-400 focus:ring-red-500 focus:border-red-500"
-              : "border-gray-200 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300"
-          }`}
+          onChange={(value) => handleChange("name", value)}
           placeholder="Enter your full name"
+          error={errors.name}
           required
           autoComplete="name"
-          data-testid="booking-form-name"
+          testId="booking-form-name"
         />
-        {errors.name && (
-          <p
-            className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-in slide-in-from-top-1"
-            data-testid="booking-form-name-error"
-          >
-            <span className="text-red-500">●</span>
-            {errors.name}
-          </p>
-        )}
-      </div>
+      </FormField>
 
-      <div>
-        <label
-          htmlFor="email"
-          className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3"
-        >
-          <div className="p-1.5 bg-purple-100 rounded-lg">
-            <Mail className="w-4 h-4 text-purple-600" />
-          </div>
-          Email
-        </label>
-        <input
-          type="email"
+      <FormField
+        id="email"
+        label="Email"
+        icon={<Mail className="w-4 h-4 text-purple-600" />}
+        iconBgColor="bg-purple-100"
+        error={errors.email}
+        required
+        testId="booking-form-email"
+      >
+        <TextInput
           id="email"
+          type="email"
           value={formData.email}
-          onChange={(e) => handleChange("email", e.target.value)}
-          className={`w-full px-4 py-3.5 sm:py-3 text-base border-2 rounded-xl focus:ring-2 focus:ring-offset-1 sm:focus:ring-offset-2 transition-all duration-200 touch-manipulation ${
-            errors.email
-              ? "border-red-400 focus:ring-red-500 focus:border-red-500"
-              : "border-gray-200 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300"
-          }`}
+          onChange={(value) => handleChange("email", value)}
           placeholder="your.email@example.com"
+          error={errors.email}
           required
           autoComplete="email"
           inputMode="email"
-          data-testid="booking-form-email"
+          testId="booking-form-email"
         />
-        {errors.email && (
-          <p
-            className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-in slide-in-from-top-1"
-            data-testid="booking-form-email-error"
-          >
-            <span className="text-red-500">●</span>
-            {errors.email}
-          </p>
-        )}
-      </div>
+      </FormField>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-        <div>
-          <label
-            htmlFor="date"
-            className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 sm:mb-3"
-          >
-            <div className="p-1.5 bg-green-100 rounded-lg">
-              <Calendar className="w-4 h-4 text-green-600" />
-            </div>
-            Date
-          </label>
-          <input
-            type="date"
+        <FormField
+          id="date"
+          label="Date"
+          icon={<Calendar className="w-4 h-4 text-green-600" />}
+          iconBgColor="bg-green-100"
+          error={errors.date}
+          required
+          testId="booking-form-date"
+        >
+          <TextInput
             id="date"
+            type="date"
             value={formData.date}
-            onChange={(e) => handleChange("date", e.target.value)}
-            min={getTodayDate()}
-            className={`w-full px-4 py-3.5 sm:py-3 text-base border-2 rounded-xl focus:ring-2 focus:ring-offset-1 sm:focus:ring-offset-2 transition-all duration-200 touch-manipulation ${
-              errors.date
-                ? "border-red-400 focus:ring-red-500 focus:border-red-500"
-                : "border-gray-200 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300"
-            }`}
+            onChange={(value) => handleChange("date", value)}
+            error={errors.date}
             required
-            data-testid="booking-form-date"
+            min={getTodayDate()}
+            testId="booking-form-date"
           />
-          {errors.date && (
-            <p
-              className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-in slide-in-from-top-1"
-              data-testid="booking-form-date-error"
-            >
-              <span className="text-red-500">●</span>
-              {errors.date}
-            </p>
-          )}
-        </div>
+        </FormField>
 
-        <div>
-          <label
-            htmlFor="time"
-            className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3"
-          >
-            <div className="p-1.5 bg-orange-100 rounded-lg">
-              <Clock className="w-4 h-4 text-orange-600" />
-            </div>
-            Time
-          </label>
-          <select
+        <FormField
+          id="time"
+          label="Time"
+          icon={<Clock className="w-4 h-4 text-orange-600" />}
+          iconBgColor="bg-orange-100"
+          error={errors.time}
+          required
+          testId="booking-form-time"
+        >
+          <SelectInput
             id="time"
             value={formData.time}
-            onChange={(e) => handleChange("time", e.target.value)}
-            className={`w-full px-4 py-3.5 sm:py-3 text-base border-2 rounded-xl focus:ring-2 focus:ring-offset-1 sm:focus:ring-offset-2 transition-all duration-200 cursor-pointer touch-manipulation ${
-              errors.time
-                ? "border-red-400 focus:ring-red-500 focus:border-red-500"
-                : "border-gray-200 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300"
-            }`}
+            onChange={(value) => handleChange("time", value)}
+            options={timeSlotOptions}
+            error={errors.time}
             required
-            data-testid="booking-form-time"
-          >
-            {timeSlots.map((slot) => (
-              <option key={slot} value={slot}>
-                {slot}
-              </option>
-            ))}
-          </select>
-          {errors.time && (
-            <p
-              className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-in slide-in-from-top-1"
-              data-testid="booking-form-time-error"
-            >
-              <span className="text-red-500">●</span>
-              {errors.time}
-            </p>
-          )}
-        </div>
+            testId="booking-form-time"
+          />
+        </FormField>
       </div>
 
-      <div>
-        <label
-          htmlFor="duration"
-          className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3"
-        >
-          <div className="p-1.5 bg-indigo-100 rounded-lg">
-            <Clock className="w-4 h-4 text-indigo-600" />
-          </div>
-          Duration
-        </label>
-        <select
+      <FormField
+        id="duration"
+        label="Duration"
+        icon={<Clock className="w-4 h-4 text-indigo-600" />}
+        iconBgColor="bg-indigo-100"
+        testId="booking-form-duration"
+      >
+        <SelectInput
           id="duration"
           value={formData.duration}
-          onChange={(e) =>
-            handleChange("duration", parseInt(e.target.value, 10))
-          }
-          className="w-full px-4 py-3.5 sm:py-3 text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-all duration-200 cursor-pointer touch-manipulation"
-          data-testid="booking-form-duration"
-        >
-          {durationOptions.map((duration) => (
-            <option key={duration} value={duration}>
-              {duration} minutes
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <label
-          htmlFor="notes"
-          className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3"
-        >
-          <div className="p-1.5 bg-pink-100 rounded-lg">
-            <FileText className="w-4 h-4 text-pink-600" />
-          </div>
-          Notes (optional)
-        </label>
-        <textarea
-          id="notes"
-          value={formData.notes}
-          onChange={(e) => handleChange("notes", e.target.value)}
-          rows={4}
-          className="w-full px-4 py-3 text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-300 transition-all duration-200 resize-none touch-manipulation"
-          placeholder="Any additional notes or special requirements..."
-          data-testid="booking-form-notes"
+          onChange={(value) => handleChange("duration", value)}
+          options={durationSelectOptions}
+          testId="booking-form-duration"
         />
-      </div>
+      </FormField>
 
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 sm:pt-6">
-        <button
-          type="submit"
-          formNoValidate
-          className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3.5 sm:py-3 px-6 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 min-h-[48px] text-base touch-manipulation"
-          data-testid="booking-form-submit"
-        >
-          {initialData ? "Update Booking" : "Create Booking"}
-        </button>
-        {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="flex-1 bg-gray-100 text-gray-700 py-3.5 sm:py-3 px-6 rounded-xl hover:bg-gray-200 transition-all duration-200 font-semibold border-2 border-gray-200 hover:border-gray-300 min-h-[48px] text-base touch-manipulation"
-            data-testid="booking-form-cancel"
-          >
-            Cancel
-          </button>
-        )}
-      </div>
+      <FormField
+        id="notes"
+        label="Notes (optional)"
+        icon={<FileText className="w-4 h-4 text-pink-600" />}
+        iconBgColor="bg-pink-100"
+        testId="booking-form-notes"
+      >
+        <TextareaInput
+          id="notes"
+          value={formData.notes || ""}
+          onChange={(value) => handleChange("notes", value)}
+          placeholder="Any additional notes or special requirements..."
+          testId="booking-form-notes"
+        />
+      </FormField>
+
+      <FormButtons
+        submitLabel={initialData ? "Update Booking" : "Create Booking"}
+        onCancel={onCancel}
+      />
     </form>
   );
 };

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import type { Booking } from "../../types/interfaces";
 import type { BookingCalendarProps } from "../../types/interfaces";
 import { formatDate, getTodayDate } from "../../utils/dateUtils";
+import { monthNames, dayNames } from "../../data/calendarData";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export const BookingCalendar = ({
@@ -22,23 +24,6 @@ export const BookingCalendar = ({
   const lastDayOfMonth = new Date(year, month + 1, 0);
   const daysInMonth = lastDayOfMonth.getDate();
   const startingDayOfWeek = firstDayOfMonth.getDay();
-
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const getBookingsForDate = (date: string): Booking[] => {
     return bookings.filter((booking) => booking.date === date);
