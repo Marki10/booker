@@ -1,16 +1,27 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { apiService, checkBackendAvailable } from "../apiService";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const mockResponse = (body: unknown, init?: Partial<Response>) =>
-  new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-    ...init,
-  } as ResponseInit);
+// Mock axios module
+vi.mock("axios", async () => {
+  const actual = await vi.importActual("axios");
+  const mockAxiosInstance = {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+  };
+  return {
+    ...actual,
+    default: {
+      ...actual.default,
+      create: vi.fn(() => mockAxiosInstance),
+      isAxiosError: vi.fn((error: unknown) => {
+        return error instanceof Error && "response" in error;
+      }),
+    },
+  };
+});
 
 describe("apiService", () => {
-  const originalFetch = globalThis.fetch;
-
   const testData = {
     list: [{ id: "booking-1" }],
     createPayload: {
@@ -25,21 +36,19 @@ describe("apiService", () => {
     deleteId: "booking-1",
   };
 
-  beforeEach(() => {
-    vi.useRealTimers();
-    globalThis.fetch = vi.fn() as unknown as typeof fetch;
-  });
-
-  afterEach(() => {
-    globalThis.fetch = originalFetch;
-    vi.restoreAllMocks();
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    vi.resetModules();
   });
 
   it("getAllBookings returns parsed data on success", async () => {
-    (
-      globalThis.fetch as unknown as ReturnType<typeof vi.fn>
-    ).mockResolvedValueOnce(mockResponse(testData.list));
+    const axios = await import("axios");
+    const axiosInstance = axios.default.create({});
+    (axiosInstance.get as ReturnType<typeof vi.fn>).mockResolvedValue({
+      data: testData.list,
+    });
 
+    const { apiService } = await import("../apiService");
     const data = await apiService.getAllBookings();
     expect(Array.isArray(data)).toBe(true);
     const first = (data as Array<{ id: string }>)[0];
@@ -47,26 +56,36 @@ describe("apiService", () => {
   });
 
   it("createBooking posts data and returns created booking", async () => {
-    (
-      globalThis.fetch as unknown as ReturnType<typeof vi.fn>
-    ).mockResolvedValueOnce(mockResponse(testData.createResponse));
+    const axios = await import("axios");
+    const axiosInstance = axios.default.create({});
+    (axiosInstance.post as ReturnType<typeof vi.fn>).mockResolvedValue({
+      data: testData.createResponse,
+    });
+
+    const { apiService } = await import("../apiService");
     const created = await apiService.createBooking(testData.createPayload);
     expect(created.id).toBe(testData.createResponse.id);
   });
 
-  it("deleteBooking sends DELETE and resolves on 200", async () => {
-    (
-      globalThis.fetch as unknown as ReturnType<typeof vi.fn>
-    ).mockResolvedValueOnce(new Response(null, { status: 200 }));
-    await expect(
-      apiService.deleteBooking(testData.deleteId),
-    ).resolves.toBeUndefined();
+  it("deleteBooking sends DELETE and resolves on success", async () => {
+    const axios = await import("axios");
+    const axiosInstance = axios.default.create({});
+    (axiosInstance.delete as ReturnType<typeof vi.fn>).mockResolvedValue({
+      data: undefined,
+    });
+
+    const { apiService } = await import("../apiService");
+    await expect(apiService.deleteBooking(testData.deleteId)).resolves.toBeUndefined();
   });
 
   it("checkBackendAvailable returns false on error", async () => {
-    (
-      globalThis.fetch as unknown as ReturnType<typeof vi.fn>
-    ).mockRejectedValueOnce(new Error("network"));
+    const axios = await import("axios");
+    const axiosInstance = axios.default.create({});
+    (axiosInstance.get as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new Error("network"),
+    );
+
+    const { checkBackendAvailable } = await import("../apiService");
     const ok = await checkBackendAvailable();
     expect(ok).toBe(false);
   });

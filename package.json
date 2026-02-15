@@ -68,11 +68,5 @@
     "**/*.{js,jsx,css,md,json}": [
       "prettier --write"
     ]
-  },
-  "vitest": {
-    "environment": "jsdom",
-    "setupFiles": [
-      "src/setupTests.ts"
-    ]
   }
 }
