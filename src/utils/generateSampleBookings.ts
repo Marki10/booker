@@ -35,9 +35,30 @@ export const generateSampleBookings = async (): Promise<void> => {
     },
   ]
 
+  await bookingService.syncWithBackend()
+  const buildBookingKey = (
+    booking: Pick<BookingFormData, 'name' | 'email' | 'date' | 'time' | 'duration'>,
+  ): string =>
+    [
+      booking.name.trim().toLowerCase(),
+      booking.email.trim().toLowerCase(),
+      booking.date,
+      booking.time,
+      booking.duration,
+    ].join('|')
+
+  const existingBookingKeys = new Set(
+    bookingService.getAllBookings().map((booking) => buildBookingKey(booking)),
+  )
+
   for (const bookingData of sampleBookings) {
+    const bookingKey = buildBookingKey(bookingData)
+    if (existingBookingKeys.has(bookingKey)) {
+      continue
+    }
     try {
       await bookingService.createBooking(bookingData)
+      existingBookingKeys.add(bookingKey)
     } catch (error) {
       console.error('Error creating sample booking:', error)
     }

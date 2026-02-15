@@ -249,4 +249,42 @@ describe("bookingService", () => {
     const ids = (state.bookings as Booking[]).map((b) => b.id).sort();
     expect(ids).toEqual(["booking-1", "booking-2"]);
   });
+
+  it("syncWithBackend deduplicates equivalent bookings with different ids", async () => {
+    backendAvailable = true;
+    const storage = await getStorageMock();
+    const api = await getApiMock();
+    storage.__setBookings([
+      {
+        id: "booking-local",
+        name: "Alice",
+        email: "alice@example.com",
+        date: "2025-11-15",
+        time: "09:00",
+        duration: 60,
+        status: "confirmed",
+        createdAt: "2025-11-10T10:00:00.000Z",
+        updatedAt: "2025-11-10T10:00:00.000Z",
+      },
+    ]);
+    (api.getAllBookings as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce([
+      {
+        id: "booking-remote",
+        name: "Alice",
+        email: "alice@example.com",
+        date: "2025-11-15",
+        time: "09:00",
+        duration: 60,
+        status: "confirmed",
+        createdAt: "2025-11-10T10:00:00.000Z",
+        updatedAt: "2025-11-10T11:00:00.000Z",
+      },
+    ]);
+    const svc = await importService();
+    const res = await svc.syncWithBackend();
+    expect(res.success).toBe(true);
+    const state = storage.__getState();
+    expect(state.bookings).toHaveLength(1);
+    expect((state.bookings as Booking[])[0].id).toBe("booking-remote");
+  });
 });

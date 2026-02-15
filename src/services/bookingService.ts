@@ -22,17 +22,41 @@ const initializeStorage = (): void => {
 initializeStorage();
 
 const mergeBookings = (local: Booking[], remote: Booking[]): Booking[] => {
-  const merged = new Map<string, Booking>();
+  const mergedById = new Map<string, Booking>();
+  const mergedBySignature = new Map<string, Booking>();
+  const buildSignature = (booking: Booking): string =>
+    [
+      booking.name.trim().toLowerCase(),
+      booking.email.trim().toLowerCase(),
+      booking.date,
+      booking.time,
+      booking.duration,
+    ].join("|");
 
   local.forEach((booking) => {
-    merged.set(booking.id, booking);
+    mergedById.set(booking.id, booking);
   });
 
   remote.forEach((booking) => {
-    merged.set(booking.id, booking);
+    mergedById.set(booking.id, booking);
   });
 
-  return Array.from(merged.values());
+  Array.from(mergedById.values()).forEach((booking) => {
+    const signature = buildSignature(booking);
+    const existing = mergedBySignature.get(signature);
+    if (!existing) {
+      mergedBySignature.set(signature, booking);
+      return;
+    }
+    const existingUpdatedAt = new Date(existing.updatedAt).getTime();
+    const nextUpdatedAt = new Date(booking.updatedAt).getTime();
+    mergedBySignature.set(
+      signature,
+      nextUpdatedAt >= existingUpdatedAt ? booking : existing,
+    );
+  });
+
+  return Array.from(mergedBySignature.values());
 };
 
 export const bookingService = {
