@@ -7,6 +7,7 @@
     "build": "next build && echo '' > out/.nojekyll",
     "start": "next start",
     "lint": "eslint . --config eslint.config.mjs",
+    "lint-staged": "lint-staged",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d out",
     "test": "vitest run",
