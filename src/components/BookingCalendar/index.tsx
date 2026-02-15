@@ -62,11 +62,9 @@ export const BookingCalendar = memo(({
   };
 
   const days = [];
-  // Add empty cells for days before the first day of the month
   for (let i = 0; i < startingDayOfWeek; i++) {
     days.push(null);
   }
-  // Add cells for each day of the month
   for (let day = 1; day <= daysInMonth; day++) {
     days.push(day);
   }

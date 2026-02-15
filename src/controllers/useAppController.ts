@@ -116,21 +116,14 @@ export const useAppController = () => {
     setSelectedDate("");
   }, []);
 
-  // Generate sample bookings on first load if no bookings exist
   const hasCheckedForSamples = useRef(false);
   useEffect(() => {
-    // Keep e2e runs deterministic by skipping automatic sample seeding in Cypress.
     if (typeof window !== "undefined" && "Cypress" in window) return;
-
-    // Only check once on mount, not on every render
     if (hasCheckedForSamples.current) return;
     hasCheckedForSamples.current = true;
-
-    // Check localStorage directly to see if bookings already exist
     const existingBookings = storageService.getBookings();
     if (existingBookings.length === 0) {
       generateSampleBookings().then(() => {
-        // Reload bookings after generating samples
         loadBookings();
       });
     }

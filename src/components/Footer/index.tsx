@@ -16,7 +16,6 @@ export const Footer = () => {
             </p>
           </div>
 
-          {/* Navigation Menu */}
           <nav className="flex items-center gap-3 sm:gap-6">
             <Link
               href="/contact/"

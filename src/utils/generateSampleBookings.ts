@@ -12,7 +12,7 @@ export const generateSampleBookings = async (): Promise<void> => {
     {
       name: 'John Smith',
       email: 'john.smith@example.com',
-      date: getFutureDate(2), // 2 days from now
+      date: getFutureDate(2),
       time: '10:00',
       duration: 60,
       notes: 'Follow-up consultation',
@@ -20,7 +20,7 @@ export const generateSampleBookings = async (): Promise<void> => {
     {
       name: 'Sarah Johnson',
       email: 'sarah.j@example.com',
-      date: getFutureDate(5), // 5 days from now
+      date: getFutureDate(5),
       time: '14:30',
       duration: 90,
       notes: 'Initial consultation - please bring previous medical records',
@@ -28,14 +28,13 @@ export const generateSampleBookings = async (): Promise<void> => {
     {
       name: 'Michael Chen',
       email: 'm.chen@example.com',
-      date: getFutureDate(7), // 7 days from now
+      date: getFutureDate(7),
       time: '11:00',
       duration: 30,
       notes: 'Quick check-up',
     },
   ]
 
-  // Create each booking
   for (const bookingData of sampleBookings) {
     try {
       await bookingService.createBooking(bookingData)

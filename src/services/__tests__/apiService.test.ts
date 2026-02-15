@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// Mock axios module
 vi.mock("axios", async () => {
-  const actual = await vi.importActual("axios");
+  const actual = await vi.importActual<typeof import("axios")>("axios");
   const mockAxiosInstance = {
     get: vi.fn(),
     post: vi.fn(),

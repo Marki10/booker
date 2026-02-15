@@ -286,5 +286,4 @@ export const bookingService = {
 };
 
 bookingService.checkBackend().catch(() => {
-  // Backend not available, continue with localStorage only
 });

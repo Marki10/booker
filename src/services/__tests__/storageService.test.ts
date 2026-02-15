@@ -7,7 +7,6 @@ describe("storageService", () => {
   const SYNC_META_KEY = "booker_sync_meta";
 
   beforeEach(() => {
-    // Reset localStorage
     window.localStorage.clear();
     vi.restoreAllMocks();
   });

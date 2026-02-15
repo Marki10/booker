@@ -53,9 +53,6 @@ export const BookingForm = ({
       return;
     }
 
-    // Check if time slot is available
-    // Note: We don't have the booking ID here when editing, so we check availability
-    // The backend will handle the conflict check properly
     const isAvailable = await bookingService.isTimeSlotAvailable(
       formData.date,
       formData.time,
@@ -85,7 +82,6 @@ export const BookingForm = ({
     value: string | number,
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error for this field when user starts typing
     if (errors[field]) {
       setErrors((prev) => {
         const newErrors = { ...prev };

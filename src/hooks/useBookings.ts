@@ -75,10 +75,7 @@ export const useBookings = () => {
   );
 
   useEffect(() => {
-    // Load from localStorage first (instant)
     loadBookings();
-
-    // Then try to sync with backend
     syncWithBackend();
   }, [loadBookings, syncWithBackend]);
 

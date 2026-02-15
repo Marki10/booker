@@ -37,7 +37,6 @@ body {
   box-sizing: border-box;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -57,7 +56,6 @@ body {
   background: #555;
 }
 
-/* Smooth transitions for interactive elements */
 button,
 a,
 input,
@@ -69,13 +67,11 @@ textarea {
   transition-duration: 200ms;
 }
 
-/* Mobile-friendly touch targets */
 .touch-manipulation {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Improve text rendering on mobile */
 @media (max-width: 640px) {
   body {
     -webkit-text-size-adjust: 100%;
@@ -85,11 +81,10 @@ textarea {
   input,
   select,
   textarea {
-    font-size: 16px; /* Prevents zoom on iOS */
+    font-size: 16px;
   }
 }
 
-/* Responsive text sizes */
 @media (max-width: 480px) {
   .text-xs {
     font-size: 0.7rem;

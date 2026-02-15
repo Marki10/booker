@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import type { Booking } from "../../types/interfaces";
 
-// In-memory fakes for storage and api
 const makeStorage = () => {
   let bookings: Booking[] = [];
   let syncMeta = {
@@ -55,12 +54,10 @@ const makeApi = () => {
   };
 };
 
-// Mocks must be defined before importing the module under test
 vi.mock("../storageService", () => {
   const storage = makeStorage();
   return {
     storageService: storage,
-    // expose for tests to access internal state (not used by the SUT)
     __storage: storage,
   };
 });
@@ -75,13 +72,11 @@ vi.mock("../apiService", () => {
   };
 });
 
-// Helper to import fresh module each test so module-level state resets
 const importService = async () => {
   const mod = await import("../bookingService");
   return mod.bookingService;
 };
 
-// Access to mocks
 const getStorageMock = async () =>
   ((await import("../storageService")) as unknown as {
     __storage: ReturnType<typeof makeStorage>;
@@ -209,11 +204,9 @@ describe("bookingService", () => {
       },
     ]);
     const svc = await importService();
-    // overlaps existing 09:00-10:00
     await expect(
       svc.isTimeSlotAvailable("2025-11-10", "09:30", 30),
     ).resolves.toBe(false);
-    // non-overlapping
     await expect(
       svc.isTimeSlotAvailable("2025-11-10", "10:00", 30),
     ).resolves.toBe(true);
@@ -253,7 +246,6 @@ describe("bookingService", () => {
     const res = await svc.syncWithBackend();
     expect(res.success).toBe(true);
     const state = storage.__getState();
-    // merged contains both ids
     const ids = (state.bookings as Booking[]).map((b) => b.id).sort();
     expect(ids).toEqual(["booking-1", "booking-2"]);
   });

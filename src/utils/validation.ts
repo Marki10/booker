@@ -11,7 +11,6 @@ export const validateName = (name: string): boolean => {
 };
 
 export const validateTime = (time: string): boolean => {
-  // Require 2-digit hours (00-23) and 2-digit minutes (00-59)
   const timeRegex = /^([01][0-9]|2[0-3]):[0-5][0-9]$/;
   return timeRegex.test(time);
 };
@@ -21,12 +20,10 @@ export const validateDate = (date: string): boolean => {
   if (!dateRegex.test(date)) return false;
 
   const d = new Date(date);
-  // Check if date is valid and matches the input (catches invalid dates like 2025-02-30)
   if (!(d instanceof Date) || isNaN(d.getTime())) {
     return false;
   }
 
-  // Verify the date string matches the parsed date to catch overflow dates
   const [year, month, day] = date.split("-").map(Number);
   return (
     d.getFullYear() === year &&

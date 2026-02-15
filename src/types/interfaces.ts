@@ -1,7 +1,3 @@
-// ============================================================================
-// Booking-related interfaces
-// ============================================================================
-
 export interface Booking {
   id: string;
   name: string;
@@ -35,10 +31,6 @@ export interface DayAvailability {
   slots: TimeSlot[];
 }
 
-// ============================================================================
-// Service-related interfaces
-// ============================================================================
-
 export interface SyncMetadata {
   lastSync: string | null;
   lastSyncId: string | null;
@@ -50,18 +42,10 @@ export interface ApiError {
   details?: unknown;
 }
 
-// ============================================================================
-// Validation-related interfaces
-// ============================================================================
-
 export interface ValidationError {
   field: string;
   message: string;
 }
-
-// ============================================================================
-// Component Props interfaces
-// ============================================================================
 
 export interface BookingFormProps {
   onSubmit: (booking: BookingFormData) => void | Promise<void>;
@@ -144,10 +128,6 @@ export interface AppHeaderProps {
   showForm: boolean;
   onNewBooking: () => void;
 }
-
-// ============================================================================
-// Form Component Props interfaces
-// ============================================================================
 
 export interface FormFieldProps {
   id: string;
