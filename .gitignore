@@ -60,6 +60,10 @@ Desktop.ini
 out/
 .vercel
 
+# Lighthouse
+/lighthouse-reports/
+/.lighthouseci/
+
 # Vite (legacy)
 .vite/
 vite.config.js.timestamp-*
