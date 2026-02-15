@@ -4,7 +4,7 @@ export default defineConfig({
   e2e: {
     baseUrl: "http://localhost:3000/booker/",
     supportFile: "cypress/support/e2e.ts",
-    specPattern: "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
+    specPattern: "cypress/e2e/**/*.{cy,spec}.{js,jsx,ts,tsx}",
     video: true,
     screenshotOnRunFailure: true,
     viewportWidth: 1280,

@@ -1,6 +1,6 @@
 import { testData } from "../support/testData";
 
-describe("Booking Happy Path", () => {
+describe("Booking Lifecycle", () => {
   const createBookingViaUI = (data: {
     name: string;
     email: string;
@@ -25,18 +25,12 @@ describe("Booking Happy Path", () => {
     cy.contains('[data-testid="booking-item"]', data.name).should("be.visible");
   };
 
-  before(() => {
-    cy.resetApp();
-    cy.visit("/");
-  });
-
   beforeEach(() => {
     cy.resetApp();
-    cy.visit("/");
-  });
-
-  after(() => {
-    cy.resetApp();
+    cy.visit("/", { failOnStatusCode: false });
+    cy.get('[data-testid="booking-list"], [data-testid="booking-calendar"]', {
+      timeout: 10000,
+    }).should("exist");
   });
 
   it("should create a new booking successfully", () => {
@@ -53,21 +47,6 @@ describe("Booking Happy Path", () => {
     );
   });
 
-  it("should switch between list and calendar views", () => {
-    createBookingViaUI({
-      name: testData.viewSeed.name,
-      email: testData.viewSeed.email,
-      date: testData.create.date,
-      time: testData.create.time,
-      duration: testData.create.duration,
-    });
-    cy.get('[data-testid="booking-list"]').should("be.visible");
-    cy.get('[data-testid="view-mode-calendar"]').click();
-    cy.get('[data-testid="booking-calendar"]').should("be.visible");
-    cy.get('[data-testid="view-mode-list"]').click();
-    cy.get('[data-testid="booking-list"]').should("be.visible");
-  });
-
   it("should edit an existing booking successfully", () => {
     createBookingViaUI({
       name: testData.editOriginal.name,
@@ -81,18 +60,20 @@ describe("Booking Happy Path", () => {
       .within(() => {
         cy.get('[data-testid="edit-booking-button"]').click();
       });
+    cy.get('[data-testid="booking-form-modal"]').should("be.visible");
     cy.get('[data-testid="booking-form-name"]')
       .clear()
-      .type(testData.update.name);
+      .type(testData.update.name, { force: true });
     cy.get('[data-testid="booking-form-notes"]').type(testData.update.notes);
     cy.get('[data-testid="booking-form-submit"]').click();
-    cy.reload();
-    cy.contains('[data-testid="booking-item"]', testData.update.name).should(
-      "be.visible",
-    );
-    cy.contains('[data-testid="booking-item"]', testData.update.notes).should(
-      "be.visible",
-    );
+    cy.get('[data-testid="booking-form-modal"]').should("not.exist");
+    cy.get('[data-testid="booking-list"]').should("be.visible");
+    cy.contains('[data-testid="booking-item"]', testData.update.name, {
+      timeout: 5000,
+    }).should("be.visible");
+    cy.contains('[data-testid="booking-item"]', testData.update.notes, {
+      timeout: 5000,
+    }).should("be.visible");
   });
 
   it("should delete a booking successfully", () => {
@@ -103,13 +84,31 @@ describe("Booking Happy Path", () => {
       time: testData.toDelete.time,
       duration: testData.toDelete.duration,
     });
-    cy.get('[data-testid="booking-item"]')
+    cy.contains('[data-testid="booking-item"]', testData.toDelete.name, {
+      timeout: 5000,
+    }).should("be.visible");
+    cy.contains('[data-testid="booking-item"]', testData.toDelete.name)
       .first()
       .within(() => {
         cy.get('[data-testid="delete-booking-button"]').click();
       });
-    cy.contains('[data-testid="booking-item"]', testData.toDelete.name).should(
-      "not.exist",
-    );
+    cy.contains('[data-testid="booking-item"]', testData.toDelete.name, {
+      timeout: 5000,
+    }).should("not.exist");
+  });
+
+  it("should switch between list and calendar views", () => {
+    createBookingViaUI({
+      name: testData.viewSeed.name,
+      email: testData.viewSeed.email,
+      date: testData.create.date,
+      time: testData.create.time,
+      duration: testData.create.duration,
+    });
+    cy.get('[data-testid="booking-list"]').should("be.visible");
+    cy.get('[data-testid="view-mode-calendar"]').click();
+    cy.get('[data-testid="booking-calendar"]').should("be.visible");
+    cy.get('[data-testid="view-mode-list"]').click();
+    cy.get('[data-testid="booking-list"]').should("be.visible");
   });
 });

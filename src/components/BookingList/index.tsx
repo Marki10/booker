@@ -9,7 +9,7 @@ export const BookingList = ({
 }: BookingListProps) => {
   if (bookings.length === 0) {
     return (
-      <div className="text-center py-16 px-4">
+      <div className="text-center py-16 px-4" data-testid="empty-booking-list">
         <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl mb-6">
           <Calendar className="w-10 h-10 text-blue-600" />
         </div>
