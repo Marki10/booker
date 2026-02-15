@@ -10,7 +10,6 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-lg">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4 lg:py-6">
           <div className="flex items-center justify-between">
@@ -42,7 +41,6 @@ export default function AboutPage() {
       </header>
 
       <main className="flex-1 max-w-4xl mx-auto w-full px-3 sm:px-4 lg:px-8 py-8 sm:py-12 lg:py-16">
-        {/* Header */}
         <div className="text-center mb-8 sm:mb-12">
           <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mb-4 sm:mb-6 shadow-lg">
             <Calendar className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
@@ -57,7 +55,6 @@ export default function AboutPage() {
           </p>
         </div>
 
-        {/* Key Features Section */}
         <section className="mb-12 sm:mb-16">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center mb-8 sm:mb-10">
             Key Features
@@ -120,7 +117,6 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Technology Stack Section */}
         <section className="mb-12 sm:mb-16">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center mb-8 sm:mb-10">
             Technology Stack
@@ -147,7 +143,6 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Call to Action / Back to Home */}
         <div className="text-center">
           <Link
             href="/"
@@ -159,18 +154,15 @@ export default function AboutPage() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="bg-white/80 backdrop-blur-md border-t border-gray-200/50 shadow-lg mt-auto">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
-            {/* Copyright */}
             <div className="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
               <p>
                 © {new Date().getFullYear()} Booking App. All rights reserved.
               </p>
             </div>
 
-            {/* Navigation Menu */}
             <nav className="flex items-center gap-3 sm:gap-6">
               <a
                 href="#contact"

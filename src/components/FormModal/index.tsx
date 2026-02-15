@@ -9,13 +9,11 @@ export const FormModal = ({
 }: FormModalProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto">
-      {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/30 backdrop-blur-sm"
         aria-hidden="true"
         onClick={onCancel}
       />
-      {/* Modal panel */}
       <div
         className="relative w-full max-w-2xl mx-auto mt-6 sm:mt-12 mb-6 sm:mb-12 px-3 sm:px-4"
         data-testid="booking-form-modal"

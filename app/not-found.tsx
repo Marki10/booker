@@ -4,7 +4,6 @@ import { useEffect } from "react";
 
 export default function NotFound() {
   useEffect(() => {
-    // Redirect to home page after a short delay
     const timer = setTimeout(() => {
       window.location.href = "/booker/";
     }, 2000);

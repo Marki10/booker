@@ -1,11 +1,9 @@
 import { getTimeSlots } from "../utils/dateUtils";
 
-// Booking form configuration constants
 export const BOOKING_START_HOUR = 9;
 export const BOOKING_END_HOUR = 17;
 export const BOOKING_TIME_INTERVAL = 30; // minutes
 
-// Pre-computed time slots for booking form
 export const timeSlots = getTimeSlots(
   BOOKING_START_HOUR,
   BOOKING_END_HOUR,

@@ -5,14 +5,12 @@ import type {
   ApiError,
 } from "../types/interfaces";
 
-// Next.js makes NEXT_PUBLIC_* env vars available at build time
 const API_URL =
   (typeof process !== "undefined" &&
     process.env.NEXT_PUBLIC_API_URL) ||
   "http://localhost:3000/api";
 const API_TIMEOUT = 5000; // 5 seconds
 
-// Create axios instance with default config
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
   timeout: API_TIMEOUT,
@@ -21,29 +19,24 @@ const axiosInstance: AxiosInstance = axios.create({
   },
 });
 
-// Helper function to handle axios errors
 const handleAxiosError = (error: unknown): never => {
   if (axios.isAxiosError(error)) {
     if (error.code === "ECONNABORTED" || error.message.includes("timeout")) {
       throw new Error("Request timeout: Backend is not responding");
     }
     if (error.response) {
-      // Server responded with error status
       const apiError: ApiError = error.response.data || {
         error: error.response.statusText || "Request failed",
       };
       throw new Error(apiError.error || `Request failed: ${error.response.statusText}`);
     }
     if (error.request) {
-      // Request was made but no response received
       throw new Error("No response from server. Please check your connection.");
     }
   }
-  // Unknown error
   throw error instanceof Error ? error : new Error("An unknown error occurred");
 };
 
-// Check if backend is available
 export const checkBackendAvailable = async (): Promise<boolean> => {
   try {
     const healthUrl = API_URL.replace("/api", "") + "/health";
@@ -56,9 +49,7 @@ export const checkBackendAvailable = async (): Promise<boolean> => {
   }
 };
 
-// API service for backend communication
 export const apiService = {
-  // Get all bookings from backend
   async getAllBookings(): Promise<Booking[]> {
     try {
       const response = await axiosInstance.get<Booking[]>("/bookings");
@@ -68,7 +59,6 @@ export const apiService = {
     }
   },
 
-  // Get booking by ID
   async getBookingById(id: string): Promise<Booking> {
     try {
       const response = await axiosInstance.get<Booking>(`/bookings/${id}`);
@@ -78,7 +68,6 @@ export const apiService = {
     }
   },
 
-  // Create booking on backend
   async createBooking(data: BookingFormData): Promise<Booking> {
     try {
       const response = await axiosInstance.post<Booking>("/bookings", data);
@@ -88,7 +77,6 @@ export const apiService = {
     }
   },
 
-  // Update booking on backend
   async updateBooking(
     id: string,
     data: Partial<BookingFormData>,
@@ -101,7 +89,6 @@ export const apiService = {
     }
   },
 
-  // Delete booking on backend
   async deleteBooking(id: string): Promise<void> {
     try {
       await axiosInstance.delete(`/bookings/${id}`);
@@ -110,7 +97,6 @@ export const apiService = {
     }
   },
 
-  // Check availability on backend
   async checkAvailability(
     date: string,
     time: string,

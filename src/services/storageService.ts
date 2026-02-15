@@ -4,7 +4,6 @@ const STORAGE_KEY = "booker_bookings";
 const SYNC_META_KEY = "booker_sync_meta";
 
 export const storageService = {
-  // Get all bookings from localStorage
   getBookings(): Booking[] {
     if (typeof window === "undefined" || !this.isAvailable()) {
       return [];
@@ -19,7 +18,6 @@ export const storageService = {
     }
   },
 
-  // Save bookings to localStorage
   saveBookings(bookings: Booking[]): void {
     if (typeof window === "undefined" || !this.isAvailable()) {
       return;
@@ -28,7 +26,6 @@ export const storageService = {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
     } catch (error) {
       console.error("Error saving to localStorage:", error);
-      // Handle quota exceeded error
       if (error instanceof Error && error.name === "QuotaExceededError") {
         throw new Error(
           "Local storage quota exceeded. Please clear some data.",
@@ -37,7 +34,6 @@ export const storageService = {
     }
   },
 
-  // Get sync metadata
   getSyncMetadata(): SyncMetadata {
     if (typeof window === "undefined" || !this.isAvailable()) {
       return {
@@ -66,7 +62,6 @@ export const storageService = {
     }
   },
 
-  // Save sync metadata
   saveSyncMetadata(metadata: SyncMetadata): void {
     if (typeof window === "undefined" || !this.isAvailable()) {
       return;
@@ -78,7 +73,6 @@ export const storageService = {
     }
   },
 
-  // Clear all data
   clearAll(): void {
     if (typeof window === "undefined" || !this.isAvailable()) {
       return;
@@ -91,7 +85,6 @@ export const storageService = {
     }
   },
 
-  // Check if localStorage is available
   isAvailable(): boolean {
     if (typeof window === "undefined") {
       return false;
